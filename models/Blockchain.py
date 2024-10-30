@@ -46,6 +46,5 @@ if __name__ == "__main__":
     for i in range(10):
         blockchain1.add_block(f"Transaction {i}", str(datetime.datetime.now()))
         print(blockchain1.chain[i])
-        time.sleep(1)
 
     print(blockchain1.is_valid())
