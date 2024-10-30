@@ -1,21 +1,33 @@
 from Block import Block
-
+import time
+import hashlib
+import datetime
 class Blockchain:
     def __init__(self) -> None:
         self.chain = []
         self._length = 0
     
     # Making new block to append in blockchain
-    def add_block(self, transaction:str) -> Block:
-        id_block = len(self.chain) + 1
-        block = Block(id_block, "0", transaction)
-        self.chain.append(block)
+    def add_block(self, transaction:str, timestamp:str) -> Block:
+
+        # Making Genesis Block
+        if self._length == 0:
+            id_block = self._length + 1
+            new_block = Block(id_block, hashlib.sha256(b"0").hexdigest(), transaction, timestamp)
+        
+        else:
+            previous_block = self.chain[-1]
+            id_block = self._length + 1
+            new_block = Block(id_block, previous_block.hash, transaction, timestamp)
+
+        self.chain.append(new_block)
         self._length += 1
-        return block
+        return new_block
     
     def get_chain(self) -> list:
         return self.chain
     
+    # Verification Valid Blockchain
     def is_valid(self) -> bool:
         for i in range(1, len(self.chain)):
             previous_block = self.chain[i-1]
@@ -31,9 +43,9 @@ class Blockchain:
 if __name__ == "__main__":
     blockchain1 = Blockchain()
 
-    blockchain1.add_block("Hello world")
-    blockchain1.add_block("Make Consensus algorithm")
-    blockchain1.add_block("Siwakorn Paswang")
+    for i in range(10):
+        blockchain1.add_block(f"Transaction {i}", str(datetime.datetime.now()))
+        print(blockchain1.chain[i])
+        time.sleep(1)
 
-    for i in blockchain1.get_chain():
-        print(i)
+    print(blockchain1.is_valid())
