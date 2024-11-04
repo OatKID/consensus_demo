@@ -1,5 +1,6 @@
-from models.Blockchain import Blockchain
-from models.Block import Block
+from Blockchain import Blockchain
+from Block import Block
+from datetime import datetime
 class Node:
     def __init__(self, idUser:str, timestamp:str) -> None:
         self.idUser = idUser
@@ -29,3 +30,10 @@ class Node:
     
     def unsetLeader(self):
         self.is_leader = False
+
+
+if __name__ == "__main__":
+    node1 = Node("123456", str(datetime.now()))
+    node1.add_block("Hello world", str(datetime.now()))
+    node1.add_block("Hello world", str(datetime.now()))
+    print(node1.blockchain.get_chain())

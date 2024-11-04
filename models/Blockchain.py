@@ -1,5 +1,4 @@
-from models.Block import Block
-import time
+from Block import Block
 import hashlib
 import datetime
 class Blockchain:
