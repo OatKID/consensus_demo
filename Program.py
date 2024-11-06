@@ -3,6 +3,7 @@ from typing import Union
 from fastapi import FastAPI, Request
 from pydantic import BaseModel
 import requests
+import httpx
 
 class RequestTransaction(BaseModel):
     idUser: str
@@ -10,8 +11,16 @@ class RequestTransaction(BaseModel):
 
 app = FastAPI()
 
+async def fetch(url:str, package):
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.post(url, json=package)
+            return response
+        except httpx.RequestError:
+            raise httpx.RequestError(f"{url} is not active.")
+
 @app.post("/requestTransaction")
-def request_transaction(request:RequestTransaction, r:Request):
+async def request_transaction(request:RequestTransaction, r:Request):
     ports = [8001, 8002, 8003, 8004]
     current_port = r.url.port
     package = {
@@ -22,11 +31,11 @@ def request_transaction(request:RequestTransaction, r:Request):
     for i in range(len(ports)):
         if current_port != ports[i]:
             try:
-                respone = requests.post(f"http://localhost:{ports[i]}/ans", json=package)
-                print(f"Port {ports[i]} is OK.")
-            except:
-                print(f"Port No.{ports[i]} is not active.")
-
+                respone = await fetch(f"http://localhost:{ports[i]}/ans", package)
+                print(respone.text)
+            except httpx.RequestError:
+                print(f"http://localhost:{ports[i]}/ans is not active.")
+    
     print("Complete")
 
     return {
