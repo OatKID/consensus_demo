@@ -14,3 +14,6 @@ class Node:
     
     def setKey(self, key:str):
         self.key = key
+    
+    def __repr__(self) -> str:
+        return f"IdUser=> {self.idUser}"
