@@ -1,19 +1,7 @@
 class Node:
-    def __init__(self, idUser:int, priority:int) -> None:
+    def __init__(self, idUser:int, timestamp:str) -> None:
         self.idUser = idUser
-        self.is_leader = False
-        self.priority = priority
-        self.key = ""
-        self.messages_log = []
+        self.timestamp = timestamp
 
-    def setLeader(self):
-        self.is_leader = True
-    
-    def unsetLeader(self):
-        self.is_leader = False
-    
-    def setKey(self, key:str):
-        self.key = key
-    
     def __repr__(self) -> str:
         return f"IdUser=> {self.idUser}"
