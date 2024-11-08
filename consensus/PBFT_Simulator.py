@@ -66,7 +66,10 @@ class PBFT_Simulator:
     
     def receive_prepare(self, message, index):
         self.nodes[index]["receive_messages_log"].append(message)
-        
+    
+    
+    def broadcast_commit(self, current_node):
+        pass
     
     def get_nodes(self):
         for i in range(len(self.nodes)):
@@ -93,3 +96,8 @@ class PBFT_Simulator:
         self.get_nodes()
 
         # After each node have received prepare messages already, it will broadcast commit messages to make new block (Assume that the message is true)
+        print("Commit Phase")
+        for node in self.nodes:
+            if node["faulty"] == False:
+                self.broadcast_commit(node)
+        self.get_nodes()
