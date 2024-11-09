@@ -79,13 +79,17 @@ class PBFT_Simulator:
     def receive_commit(self, message, index):
         self.nodes[index]["receive_messages_log"].append(message)
     
-    # def reply_client(self, current_node):
-    #     count = 0
-    #     for message in current_node["receive_messages_log"]:
-    #         if message[1] == "commit":
-    #             count += 1
-    #     if count == 2 * self.num_faulty + 1:
-    #         pass
+    def reply_client(self, current_node):
+        count = 0
+        for message in current_node["receive_messages_log"]:
+            if message[1] == "commit":
+                count += 1
+        
+        if count >= 2 * self.num_faulty + 1:
+            new_block = current_node["node"]
+            return 1
+        else:
+            return 0
     
     def get_nodes(self):
         for i in range(len(self.nodes)):
@@ -119,8 +123,14 @@ class PBFT_Simulator:
         self.get_nodes()
         
         # After each node have received commit messages already, it will verify those messages to create new block. and reply to the client.
-        # print("Reply Phase")
-        # for node in self.nodes:
-        #     if node["faulty"] == False:
-        #         self.reply_client(node)
-                
+        print("Reply Phase")
+        num_reply_messages = 0
+        for node in self.nodes:
+            if node["faulty"] == False:
+                num_reply_messages += self.reply_client(node)
+        
+        if num_reply_messages >= self.num_faulty + 1:
+            print("Successfully in consensus")
+        else:
+            print("Fail in consensus")
+        
