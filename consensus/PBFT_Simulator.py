@@ -69,7 +69,23 @@ class PBFT_Simulator:
     
     
     def broadcast_commit(self, current_node):
-        pass
+        message = current_node["receive_messages_log"][-1][0]
+        commit_message = (message, "commit", current_node["node"].idUser)
+        current_node["send_messages_log"].append(commit_message)
+        for i in range(len(self.nodes)):
+            if (self.nodes[i] != current_node):
+                self.receive_commit(commit_message, i)
+    
+    def receive_commit(self, message, index):
+        self.nodes[index]["receive_messages_log"].append(message)
+    
+    # def reply_client(self, current_node):
+    #     count = 0
+    #     for message in current_node["receive_messages_log"]:
+    #         if message[1] == "commit":
+    #             count += 1
+    #     if count == 2 * self.num_faulty + 1:
+    #         pass
     
     def get_nodes(self):
         for i in range(len(self.nodes)):
@@ -101,3 +117,10 @@ class PBFT_Simulator:
             if node["faulty"] == False:
                 self.broadcast_commit(node)
         self.get_nodes()
+        
+        # After each node have received commit messages already, it will verify those messages to create new block. and reply to the client.
+        # print("Reply Phase")
+        # for node in self.nodes:
+        #     if node["faulty"] == False:
+        #         self.reply_client(node)
+                
