@@ -8,7 +8,6 @@
 
 from models.Node import Node
 import random
-from datetime import datetime
 class PBFT_Simulator:
     def __init__(self, num_node:int, num_faulty:int=0) -> None:
         self.num_faulty = num_faulty
