@@ -6,7 +6,4 @@ consensus1 = PBFT_Simulator(10, 2)
 consensus2 = QPBFT_Simulator(7, 3, 2)
 consensus3 = Proposed_Simulator(7, 3)
 
-for node in consensus3.nodes:
-    print(node)
-
-# consensus.send_request("Hello world")
+consensus2.send_request("Hello world")

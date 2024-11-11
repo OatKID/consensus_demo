@@ -12,8 +12,8 @@ class PBFT_Simulator:
     def __init__(self, num_node:int, num_faulty:int=0) -> None:
         self.num_faulty = num_faulty
         self.nodes = self.generate_nodes(num_node)
+        self.primary_node_index = None
         
-    
     def generate_nodes(self, num_node:int):
         new_nodes = []
         for i in range(num_node):

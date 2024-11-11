@@ -6,6 +6,9 @@ class QPBFT_Simulator:
     def __init__(self, num_management:int, num_vote:int, num_faulty:int=0) -> None:
         self.num_faulty = num_faulty
         self.nodes = self.generate_nodes(num_management, num_vote)
+        self.primary_node_index = 0
+        self.num_management = num_management
+        self.num_vote = num_vote
     
     def generate_nodes(self, num_management, num_vote):
         new_nodes = []
@@ -23,13 +26,73 @@ class QPBFT_Simulator:
 
         return new_nodes
     
-    def brocastcast(self):
-        pass
+    def broadcast_prepare(self):
+        message = self.nodes[self.primary_node_index].receive_messages_log[-1]
+        prepare_message = (message[0], "prepare", self.nodes[self.primary_node_index].idUser)
+        self.nodes[self.primary_node_index].send_messages_log = prepare_message
+
+        for current_node in self.nodes:
+            if current_node.role.value == Role.VOTER.value:
+                self.receive_prepare(current_node, prepare_message)
+
+    def receive_prepare(self, node, prepare_message):
+        node.receive_messages_log.append(prepare_message)
+
     
     def reply_management(self):
-        pass
+        for current_node in self.nodes:
+            if (current_node.role.value == Role.VOTER.value) and (current_node.faulty == False):
+                message = current_node.receive_messages_log[-1]
+                confirm = random.randint(0, 1)
+                confirm_message = (message[0], "confirm", current_node.idUser, confirm)
+                current_node.send_messages_log = confirm_message
+                self.nodes[self.primary_node_index].receive_messages_log.append(confirm_message)
     
+    def verfity_vote(self):
+        messages = self.nodes[self.primary_node_index].receive_messages_log[1:]
+        count_vote = 0
+        for message in messages:
+            if message[3]:
+                count_vote += 1
+
+        if count_vote >= 1 + (self.num_vote//2):
+            return True
+        else:
+            return False
+        
+    def broadcast_new_block(self):
+        message = self.nodes[self.primary_node_index].send_messages_log[0]
+        for node in self.nodes:
+            if node.faulty == False:
+                node.add_block(message, datetime.now())
+    
+    def print_nodes(self):
+        for i in range(len(self.nodes)):
+            print(self.nodes[i])
+        print("-"*30)
     
     def send_request(self, request:str):
-        pass
-    
+        # The client begins to send a request to the management node.
+        self.nodes[self.primary_node_index].receive_messages_log.append((request, "request", -1))
+        self.print_nodes()
+
+        self.broadcast_prepare()
+        self.print_nodes()
+
+        self.reply_management()
+        self.print_nodes()
+
+        if self.verfity_vote():
+            self.broadcast_new_block()
+            print("Complete")
+        else:
+            print("Fail")
+        
+        checkFaulty = True
+        while checkFaulty:
+            self.primary_node_index = random.randint(0, self.num_management + self.num_vote - 1)
+            current_node = self.nodes[self.primary_node_index]
+            if (current_node.faulty == False) and (current_node.role.value == Role.MANAGER.value):
+                checkFaulty = False
+                break
+        
