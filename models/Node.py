@@ -1,12 +1,11 @@
 from models.Blockchain import Blockchain
 class Node:
-    def __init__(self, idUser:int, faulty:bool=False, role:str=None) -> None:
+    def __init__(self, idUser:int, faulty:bool=False) -> None:
         self.idUser = idUser
         self.blockchain = Blockchain()
         self.send_messages_log = ""
         self.receive_messages_log = []
         self.faulty = faulty
-        self.role = role
     
     def add_block(self, transaction:str, timestamp:str):
         return self.blockchain.add_block(transaction, timestamp)
