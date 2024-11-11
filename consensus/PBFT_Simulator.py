@@ -18,12 +18,7 @@ class PBFT_Simulator:
     def generate_nodes(self, num_node:int):
         new_nodes = []
         for i in range(num_node):
-            new_node = {
-                "node" : Node(i, str(datetime.now())),
-                "send_messages_log": [],
-                "receive_messages_log": [],
-                "faulty": False
-            }
+            new_node = Node(i)
 
             new_nodes.append(new_node)
 
@@ -32,61 +27,61 @@ class PBFT_Simulator:
     
         faulty_nodes = random.sample(new_nodes, k=self.num_faulty)
         for f_node in faulty_nodes:
-            f_node["faulty"] = True
+            f_node.faulty = True
         return new_nodes
 
     def receive_request(self, message):
         # Let choose the leader node to receive a request by using index
         self.primary_node_index = random.randint(0, len(self.nodes)-1)
-        while self.nodes[self.primary_node_index]["faulty"]:
+        while self.nodes[self.primary_node_index].faulty:
             self.primary_node_index = random.randint(0, len(self.nodes)-1)
         
         recieve_message = (message, "request", -1) # -1 define to be the client which send a request
-        self.nodes[self.primary_node_index]["receive_messages_log"].append(recieve_message)
+        self.nodes[self.primary_node_index].receive_messages_log.append(recieve_message)
     
     def broadcast_pre_prepare(self):
-        message = self.nodes[self.primary_node_index]["receive_messages_log"][-1][0]
+        message = self.nodes[self.primary_node_index].receive_messages_log[-1][0]
         pre_prepare_message = (message, "pre_preprare", self.primary_node_index)
-        self.nodes[self.primary_node_index]["send_messages_log"].append(pre_prepare_message)
+        self.nodes[self.primary_node_index].send_messages_log = pre_prepare_message
 
         for i in range(len(self.nodes)):
             if i != self.primary_node_index:
                 self.receive_pre_prepare(pre_prepare_message, i)
     
     def receive_pre_prepare(self, message, index):
-        self.nodes[index]["receive_messages_log"].append(message)
+        self.nodes[index].receive_messages_log.append(message)
     
     def broadcast_prepare(self, current_node):
-        message = current_node["receive_messages_log"][-1][0]
-        prepare_message = (message, "prepare", current_node["node"].idUser)
-        current_node["send_messages_log"].append(prepare_message)
+        message = current_node.receive_messages_log[-1][0]
+        prepare_message = (message, "prepare", current_node.idUser)
+        current_node.send_messages_log = prepare_message
         for i in range(len(self.nodes)):
             if (self.nodes[i] != current_node):
                 self.receive_prepare(prepare_message, i)
     
     def receive_prepare(self, message, index):
-        self.nodes[index]["receive_messages_log"].append(message)
+        self.nodes[index].receive_messages_log.append(message)
     
     
     def broadcast_commit(self, current_node):
-        message = current_node["receive_messages_log"][-1][0]
-        commit_message = (message, "commit", current_node["node"].idUser)
-        current_node["send_messages_log"].append(commit_message)
+        message = current_node.receive_messages_log[-1][0]
+        commit_message = (message, "commit", current_node.idUser)
+        current_node.send_messages_log = commit_message
         for i in range(len(self.nodes)):
             if (self.nodes[i] != current_node):
                 self.receive_commit(commit_message, i)
     
     def receive_commit(self, message, index):
-        self.nodes[index]["receive_messages_log"].append(message)
+        self.nodes[index].receive_messages_log.append(message)
     
     def reply_client(self, current_node):
         count = 0
-        for message in current_node["receive_messages_log"]:
+        for message in current_node.receive_messages_log:
             if message[1] == "commit":
                 count += 1
         
         if count >= 2 * self.num_faulty + 1:
-            new_block = current_node["node"]
+            new_block = current_node
             return 1
         else:
             return 0
@@ -111,14 +106,14 @@ class PBFT_Simulator:
         # Other nodes which exclude the leader node will broadcast other nodes (Prepare Phase)
         print("Prepare Phase")
         for node in self.nodes:
-            if node != self.nodes[self.primary_node_index] and (node["faulty"] == False):
+            if node != self.nodes[self.primary_node_index] and (node.faulty == False):
                 self.broadcast_prepare(node)
         self.get_nodes()
 
         # After each node have received prepare messages already, it will broadcast commit messages to make new block (Assume that the message is true)
         print("Commit Phase")
         for node in self.nodes:
-            if node["faulty"] == False:
+            if node.faulty == False:
                 self.broadcast_commit(node)
         self.get_nodes()
         
@@ -126,7 +121,7 @@ class PBFT_Simulator:
         print("Reply Phase")
         num_reply_messages = 0
         for node in self.nodes:
-            if node["faulty"] == False:
+            if node.faulty == False:
                 num_reply_messages += self.reply_client(node)
         
         if num_reply_messages >= self.num_faulty + 1:

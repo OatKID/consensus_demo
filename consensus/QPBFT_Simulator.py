@@ -10,14 +10,7 @@ class QPBFT_Simulator:
     def generate_nodes(self, num_node, role:str):
         new_nodes = []
         for i in range(num_node):
-            new_node = {
-                "node" : Node(i, str(datetime.now())),
-                "send_messages_log": [],
-                "receive_messages_log": [],
-                "faulty": False,
-                "role": role,
-            }
-
+            new_node = Node(i, role=role)
             new_nodes.append(new_node)
         return new_nodes
 
