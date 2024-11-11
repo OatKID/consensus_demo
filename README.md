@@ -10,7 +10,7 @@ python -m venv .venv
 # window
 .\.venv\Scripts\activate.bat
 
-python install -r requirement.txt
+pip install -r requirement.txt
 ```
 
 ## How to run server
@@ -18,3 +18,9 @@ python install -r requirement.txt
 uvicorn Program:app --host 0.0.0.0 --port 8000
 ```
 > You can change Ip address of host and the number of port
+
+## Test Simulation
+``` command line
+# window
+python .\simulator.py > output.txt
+```
