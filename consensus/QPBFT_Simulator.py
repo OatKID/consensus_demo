@@ -73,18 +73,22 @@ class QPBFT_Simulator:
     
     def send_request(self, request:str):
         # The client begins to send a request to the management node which is selected to receive.
+        print("Request Phase")
         self.nodes[self.primary_node_index].receive_messages_log.append((request, "request", -1))
         self.print_nodes()
 
         # The management node broadcasts a prepare-message to voting nodes
+        print("Prepare Phase")
         self.broadcast_prepare()
         self.print_nodes()
 
         # The voting nodes commit the message and reply a commit-message to the management node
+        print("Commit Phase")
         self.reply_management()
         self.print_nodes()
 
         # The management node verify the number of votes, which are accepted a message, to create management.
+        print("Produce Block Phase")
         if self.verfity_vote():
             self.broadcast_new_block()
             print("Complete")

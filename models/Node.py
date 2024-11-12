@@ -12,3 +12,7 @@ class Node:
 
     def __repr__(self) -> str:
         return f"IdUser => {self.idUser}, Faulty => {str(self.faulty):<5}, Send_messages => {str(self.send_messages_log if self.send_messages_log else "\'\'"):<35}, Receive_messages => {self.receive_messages_log}"
+
+    def clear_messages(self):
+        self.send_messages_log = ""
+        self.receive_messages_log.clear()

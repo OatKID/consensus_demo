@@ -128,3 +128,6 @@ class PBFT_Simulator:
         else:
             print("Fail in consensus")
         
+        for node in self.nodes:
+            node.clear_messages()
+        

@@ -88,18 +88,22 @@ class Proposed_Simulator:
 
     def send_request(self, request:str):
         # The client sends a request to proposed_nodes which there is a the primary node to receive a request.
+        print("Request Phase")
         self.proposed_nodes[self.primary_node_index].receive_messages_log.append((request, "request", -1))
         self.print_nodes(self.proposed_nodes)
         
         # The primary node broadcast a request to other nodes in the group of proposed nodes.
+        print("Prepare Internal Phase")
         self.broadcast_internal()
         self.print_nodes(self.proposed_nodes)
 
         # Each node in the proposed nodes reply the leader node a commit-message.
+        print("Commit Internal Phase")
         self.reply_internal()
         self.print_nodes(self.proposed_nodes)
 
         # Verify the number of votes to make new block.
+        print("Produce Block Phase")
         if self.verify_vote():
             self.broadcast_new_block()
             self.print_nodes(self.nodes)
@@ -110,3 +114,6 @@ class Proposed_Simulator:
         # Choose proposed nodes to do consensus next round
         self.proposed_nodes = random.sample(self.nodes, k=self.num_proposed_nodes)
         self.primary_node_index = self.select_primary_node()
+
+        for node in self.nodes:
+            node.clear_messages
