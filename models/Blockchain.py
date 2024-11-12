@@ -38,12 +38,3 @@ class Blockchain:
                 return False
         
         return True
-
-if __name__ == "__main__":
-    blockchain1 = Blockchain()
-
-    for i in range(10):
-        blockchain1.add_block(f"Transaction {i}", str(datetime.datetime.now()))
-        print(blockchain1.chain[i])
-
-    print(blockchain1.is_valid())

@@ -14,9 +14,3 @@ class Block:
 
     def __repr__(self) -> str:
         return f"Id_block: {self.id_block} Previous_hash: {self.previous_hash} Timestamp: {self.timestamp} Transaction: {self.transaction} Hash: {self.hash}"
-
-if __name__ == "__main__":
-    block1 = Block(0, "0", "Hello world")
-    block2 = Block(1, "2", "Goodbye world")
-    print(block1)
-    print(block2)
