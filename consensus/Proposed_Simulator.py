@@ -87,15 +87,19 @@ class Proposed_Simulator:
             node.add_block(message[0], timestamp)
 
     def send_request(self, request:str):
+        # The client sends a request to proposed_nodes which there is a the primary node to receive a request.
         self.proposed_nodes[self.primary_node_index].receive_messages_log.append((request, "request", -1))
         self.print_nodes(self.proposed_nodes)
-
+        
+        # The primary node broadcast a request to other nodes in the group of proposed nodes.
         self.broadcast_internal()
         self.print_nodes(self.proposed_nodes)
 
+        # Each node in the proposed nodes reply the leader node a commit-message.
         self.reply_internal()
         self.print_nodes(self.proposed_nodes)
 
+        # Verify the number of votes to make new block.
         if self.verify_vote():
             self.broadcast_new_block()
             self.print_nodes(self.nodes)
