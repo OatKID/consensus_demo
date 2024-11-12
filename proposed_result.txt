@@ -1,0 +1,23 @@
+Request Phase
+IdUser => 2, Role =>  Master, Send_messages_log => ''                                 , Receive_messages_log => []
+IdUser => 1, Role =>  Master, Send_messages_log => ''                                 , Receive_messages_log => []
+IdUser => 6, Role =>   Slave, Send_messages_log => ''                                 , Receive_messages_log => []
+IdUser => 7, Role =>   Slave, Send_messages_log => ''                                 , Receive_messages_log => [('Hello world', 'request', -1)]
+IdUser => 9, Role =>   Slave, Send_messages_log => ''                                 , Receive_messages_log => []
+------------------------------
+Prepare Internal Phase
+IdUser => 2, Role =>  Master, Send_messages_log => ''                                 , Receive_messages_log => [('Hello world', 'prepare', 7)]
+IdUser => 1, Role =>  Master, Send_messages_log => ''                                 , Receive_messages_log => [('Hello world', 'prepare', 7)]
+IdUser => 6, Role =>   Slave, Send_messages_log => ''                                 , Receive_messages_log => [('Hello world', 'prepare', 7)]
+IdUser => 7, Role =>   Slave, Send_messages_log => ('Hello world', 'prepare', 7)      , Receive_messages_log => [('Hello world', 'request', -1)]
+IdUser => 9, Role =>   Slave, Send_messages_log => ''                                 , Receive_messages_log => [('Hello world', 'prepare', 7)]
+------------------------------
+Commit Internal Phase
+IdUser => 2, Role =>  Master, Send_messages_log => ('Hello world', 'commit', 2, 1)    , Receive_messages_log => [('Hello world', 'prepare', 7)]
+IdUser => 1, Role =>  Master, Send_messages_log => ('Hello world', 'commit', 1, 1)    , Receive_messages_log => [('Hello world', 'prepare', 7)]
+IdUser => 6, Role =>   Slave, Send_messages_log => ('Hello world', 'commit', 6, 0)    , Receive_messages_log => [('Hello world', 'prepare', 7)]
+IdUser => 7, Role =>   Slave, Send_messages_log => ('Hello world', 'prepare', 7)      , Receive_messages_log => [('Hello world', 'request', -1), ('Hello world', 'commit', 2, 1), ('Hello world', 'commit', 1, 1), ('Hello world', 'commit', 6, 0), ('Hello world', 'commit', 9, 0)]
+IdUser => 9, Role =>   Slave, Send_messages_log => ('Hello world', 'commit', 9, 0)    , Receive_messages_log => [('Hello world', 'prepare', 7)]
+------------------------------
+Produce Block Phase
+Fail

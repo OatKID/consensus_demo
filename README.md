@@ -13,14 +13,27 @@ python -m venv .venv
 pip install -r requirement.txt
 ```
 
-## How to run server
-```command line
-uvicorn Program:app --host 0.0.0.0 --port 8000
-```
-> You can change Ip address of host and the number of port
-
 ## Test Simulation
-``` command line
-# window
-python .\simulator.py > output.txt
+### Test PBFT
+``` bash
+# python simulator.py pbft <num-nodes> <num-faulty-nodes(optional)> > pbft_result.txt
+
+# Example
+python simulator.py pbft 10 2 > pbft_result.txt
+```
+
+### Test QPBFT
+``` bash
+# python simulator.py qpbft <num-management-nodes> <num-vote-nodes> <num-faulty-nodes(optional)> > qpbft_result.txt
+
+# Example
+python simulator.py qpbft 6 4 2 > qpbft_result.txt
+```
+
+### Test Proposed
+``` bash
+# python simulator.py proposed <num-master-nodes> <num-slave-nodes> <num-sample> <num-faulty-nodes(optional)> > proposed_result.txt
+
+# Example
+python simulator.py proposed 6 4 5 2 > proposed_result.txt
 ```
