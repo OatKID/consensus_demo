@@ -16,3 +16,10 @@ class Node:
     def clear_messages(self):
         self.send_messages_log = ""
         self.receive_messages_log.clear()
+    
+    def filter_messages(self, phase:str):
+        new_messages = []
+        for message in self.receive_messages_log:
+            if message[1] == phase:
+                new_messages.append(message)
+        return new_messages

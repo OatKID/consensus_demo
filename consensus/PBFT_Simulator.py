@@ -1,13 +1,5 @@
-# import sys
-# import os
-
-# path = os.getcwd()
-# parent_path = os.path.abspath(os.path.join(path, os.pardir))
-# sys.path.insert(0, f"{parent_path}")
-
-
 from models.Node import Node
-import random
+import random, datetime
 class PBFT_Simulator:
     def __init__(self, num_node:int, num_faulty:int=0) -> None:
         self.num_faulty = num_faulty
@@ -64,7 +56,7 @@ class PBFT_Simulator:
     
     
     def broadcast_commit(self, current_node):
-        message = current_node.receive_messages_log[-1][0]
+        message = current_node.filter_messages("prepare")
         commit_message = (message, "commit", current_node.idUser, random.randint(0, 1))
         current_node.send_messages_log = commit_message
         for i in range(len(self.nodes)):
@@ -78,10 +70,10 @@ class PBFT_Simulator:
         count = 0
         for message in current_node.receive_messages_log:
             if message[1] == "commit":
-                count += 1
+                if message[3]:
+                    count += 1
         
         if count >= 2 * self.num_faulty + 1:
-            new_block = current_node
             return 1
         else:
             return 0
@@ -125,6 +117,10 @@ class PBFT_Simulator:
                 num_reply_messages += self.reply_client(node)
         
         if num_reply_messages >= self.num_faulty + 1:
+            date = str(datetime.datetime.now())
+            for node in self.nodes:
+                if node.faulty == False:
+                    node.add_block(node.receive_messages_log[-1][0], date)
             print("Successfully in consensus")
             self.success_proof += 1
         else:
