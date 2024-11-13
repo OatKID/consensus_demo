@@ -9,6 +9,7 @@ class QPBFT_Simulator:
         self.primary_node_index = 0
         self.num_management = num_management
         self.num_vote = num_vote
+        self.success_proof = 0
     
     def generate_nodes(self, num_management, num_vote):
         new_nodes = []
@@ -48,8 +49,16 @@ class QPBFT_Simulator:
                 current_node.send_messages_log = confirm_message
                 self.nodes[self.primary_node_index].receive_messages_log.append(confirm_message)
     
+    def get_user_receive(self, n):
+        return n[2]
+
+    def sort(self, list_of_tuples):
+        return sorted(list_of_tuples, key=self.get_user_receive)
+    
     def verfity_vote(self):
-        messages = self.nodes[self.primary_node_index].receive_messages_log[1:]
+        messages = self.sort(self.nodes[self.primary_node_index].receive_messages_log)
+        messages = messages[1:]
+        
         count_vote = 0
         for message in messages:
             if message[3]:
@@ -92,6 +101,7 @@ class QPBFT_Simulator:
         if self.verfity_vote():
             self.broadcast_new_block()
             print("Complete")
+            self.success_proof += 1
         else:
             print("Fail")
         
@@ -102,4 +112,7 @@ class QPBFT_Simulator:
             if (current_node.faulty == False) and (current_node.role.value == Role.MANAGER.value):
                 checkFaulty = False
                 break
+        
+        for node in self.nodes:
+            node.clear_messages()
         

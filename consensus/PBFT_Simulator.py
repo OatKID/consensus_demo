@@ -13,6 +13,7 @@ class PBFT_Simulator:
         self.num_faulty = num_faulty
         self.nodes = self.generate_nodes(num_node)
         self.primary_node_index = None
+        self.success_proof = 0
         
     def generate_nodes(self, num_node:int):
         new_nodes = []
@@ -64,7 +65,7 @@ class PBFT_Simulator:
     
     def broadcast_commit(self, current_node):
         message = current_node.receive_messages_log[-1][0]
-        commit_message = (message, "commit", current_node.idUser)
+        commit_message = (message, "commit", current_node.idUser, random.randint(0, 1))
         current_node.send_messages_log = commit_message
         for i in range(len(self.nodes)):
             if (self.nodes[i] != current_node):
@@ -125,6 +126,7 @@ class PBFT_Simulator:
         
         if num_reply_messages >= self.num_faulty + 1:
             print("Successfully in consensus")
+            self.success_proof += 1
         else:
             print("Fail in consensus")
         

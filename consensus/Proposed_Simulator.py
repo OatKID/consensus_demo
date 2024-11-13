@@ -9,6 +9,7 @@ class Proposed_Simulator:
         self.nodes = self.generate_nodes(num_master, num_slave)
         self.proposed_nodes = random.sample(self.nodes, k=k)
         self.primary_node_index = self.select_primary_node()
+        self.success_proof = 0
         
     def generate_nodes(self, num_master, num_slave):
         new_nodes = []
@@ -108,6 +109,7 @@ class Proposed_Simulator:
             self.broadcast_new_block()
             self.print_nodes(self.nodes)
             print("Complete")
+            self.success_proof += 1
         else:
             print("Fail")
         
@@ -116,4 +118,4 @@ class Proposed_Simulator:
         self.primary_node_index = self.select_primary_node()
 
         for node in self.nodes:
-            node.clear_messages
+            node.clear_messages()
