@@ -56,8 +56,8 @@ class PBFT_Simulator:
     
     
     def broadcast_commit(self, current_node):
-        message = current_node.filter_messages("prepare")
-        commit_message = (message, "commit", current_node.idUser, random.randint(0, 1))
+        messages = current_node.filter_messages("prepare")
+        commit_message = (messages[0][0], "commit", current_node.idUser, random.randint(0, 1))
         current_node.send_messages_log = commit_message
         for i in range(len(self.nodes)):
             if (self.nodes[i] != current_node):
