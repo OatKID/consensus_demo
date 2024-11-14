@@ -8,7 +8,7 @@ class QPBFT_Node(Node):
         self.reliable_socre = 0
     
     def __repr__(self) -> str:
-        return f"IdUser => {self.idUser}, Role => {self.role.value:>8}, Faulty => {str(self.faulty):>6}, Send_messages_log => {str(self.send_messages_log if self.send_messages_log else "\'\'"):<35}, Receive_messages_log => {self.receive_messages_log}"
+        return f"IdUser => {self.idUser}, Role => {self.role.value:>8}, Faulty => {str(self.faulty):>6}, send_message_log => {str(self.send_message_log if self.send_message_log else "\'\'"):<35}, Receive_messages_log => {self.receive_messages_log}"
     
     def _generate_score(self, num_value):
         array = []

@@ -30,7 +30,7 @@ class QPBFT_Simulator:
     def broadcast_prepare(self):
         message = self.nodes[self.primary_node_index].receive_messages_log[-1]
         prepare_message = (message[0], "prepare", self.nodes[self.primary_node_index].idUser)
-        self.nodes[self.primary_node_index].send_messages_log = prepare_message
+        self.nodes[self.primary_node_index].send_message_log = prepare_message
 
         for current_node in self.nodes:
             if current_node.role.value == Role.VOTER.value:
@@ -46,7 +46,7 @@ class QPBFT_Simulator:
                 message = current_node.receive_messages_log[-1]
                 confirm = random.randint(0, 1)
                 confirm_message = (message[0], "confirm", current_node.idUser, confirm)
-                current_node.send_messages_log = confirm_message
+                current_node.send_message_log = confirm_message
                 self.nodes[self.primary_node_index].receive_messages_log.append(confirm_message)
     
     def get_user_receive(self, n):
@@ -70,7 +70,7 @@ class QPBFT_Simulator:
             return False
         
     def broadcast_new_block(self):
-        message = self.nodes[self.primary_node_index].send_messages_log[0]
+        message = self.nodes[self.primary_node_index].send_message_log[0]
         for node in self.nodes:
             if node.faulty == False:
                 node.add_block(message, datetime.now())

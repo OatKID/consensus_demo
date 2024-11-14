@@ -44,7 +44,7 @@ class Proposed_Simulator:
     def broadcast_internal(self):
         message = self.proposed_nodes[self.primary_node_index].receive_messages_log[-1][0]
         prepare_message = (message, "prepare", self.proposed_nodes[self.primary_node_index].idUser)
-        self.proposed_nodes[self.primary_node_index].send_messages_log = prepare_message
+        self.proposed_nodes[self.primary_node_index].send_message_log = prepare_message
         for node in self.proposed_nodes:
             if node.idUser != self.proposed_nodes[self.primary_node_index].idUser:
                 self.receive_prepare(node, prepare_message)
@@ -58,7 +58,7 @@ class Proposed_Simulator:
                 message = node.receive_messages_log[-1]
                 vote = random.randint(0, 1)
                 commit_message = (message[0], "commit", node.idUser, vote)
-                node.send_messages_log = commit_message
+                node.send_message_log = commit_message
                 self.proposed_nodes[self.primary_node_index].receive_messages_log.append(commit_message)
 
     def verify_vote(self):
@@ -74,7 +74,7 @@ class Proposed_Simulator:
             return False
 
     def broadcast_new_block(self):
-        message = self.proposed_nodes[self.primary_node_index].send_messages_log
+        message = self.proposed_nodes[self.primary_node_index].send_message_log
         new_block_message = (message[0], "new_block", self.proposed_nodes[self.primary_node_index].idUser)
         for node in self.nodes:
             if node.faulty == False:
