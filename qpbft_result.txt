@@ -1,38 +1,38 @@
 Request Phase
-IdUser => 0, Role =>  Manager, Faulty =>   True, Send_messages_log => ''                                 , Receive_messages_log => [('Hello world', 'request', -1)]
+IdUser => 0, Role =>  Manager, Faulty =>  False, Send_messages_log => ''                                 , Receive_messages_log => [('Hello world', 'request', -1)]
 IdUser => 1, Role =>  Manager, Faulty =>  False, Send_messages_log => ''                                 , Receive_messages_log => []
 IdUser => 2, Role =>  Manager, Faulty =>  False, Send_messages_log => ''                                 , Receive_messages_log => []
 IdUser => 3, Role =>  Manager, Faulty =>  False, Send_messages_log => ''                                 , Receive_messages_log => []
 IdUser => 4, Role =>  Manager, Faulty =>  False, Send_messages_log => ''                                 , Receive_messages_log => []
 IdUser => 5, Role =>  Manager, Faulty =>   True, Send_messages_log => ''                                 , Receive_messages_log => []
-IdUser => 6, Role =>    Voter, Faulty =>  False, Send_messages_log => ''                                 , Receive_messages_log => []
+IdUser => 6, Role =>    Voter, Faulty =>   True, Send_messages_log => ''                                 , Receive_messages_log => []
 IdUser => 7, Role =>    Voter, Faulty =>  False, Send_messages_log => ''                                 , Receive_messages_log => []
 IdUser => 8, Role =>    Voter, Faulty =>  False, Send_messages_log => ''                                 , Receive_messages_log => []
 IdUser => 9, Role =>    Voter, Faulty =>  False, Send_messages_log => ''                                 , Receive_messages_log => []
 ------------------------------
 Prepare Phase
-IdUser => 0, Role =>  Manager, Faulty =>   True, Send_messages_log => ('Hello world', 'prepare', 0)      , Receive_messages_log => [('Hello world', 'request', -1)]
+IdUser => 0, Role =>  Manager, Faulty =>  False, Send_messages_log => ('Hello world', 'prepare', 0)      , Receive_messages_log => [('Hello world', 'request', -1)]
 IdUser => 1, Role =>  Manager, Faulty =>  False, Send_messages_log => ''                                 , Receive_messages_log => []
 IdUser => 2, Role =>  Manager, Faulty =>  False, Send_messages_log => ''                                 , Receive_messages_log => []
 IdUser => 3, Role =>  Manager, Faulty =>  False, Send_messages_log => ''                                 , Receive_messages_log => []
 IdUser => 4, Role =>  Manager, Faulty =>  False, Send_messages_log => ''                                 , Receive_messages_log => []
 IdUser => 5, Role =>  Manager, Faulty =>   True, Send_messages_log => ''                                 , Receive_messages_log => []
-IdUser => 6, Role =>    Voter, Faulty =>  False, Send_messages_log => ''                                 , Receive_messages_log => [('Hello world', 'prepare', 0)]
+IdUser => 6, Role =>    Voter, Faulty =>   True, Send_messages_log => ''                                 , Receive_messages_log => [('Hello world', 'prepare', 0)]
 IdUser => 7, Role =>    Voter, Faulty =>  False, Send_messages_log => ''                                 , Receive_messages_log => [('Hello world', 'prepare', 0)]
 IdUser => 8, Role =>    Voter, Faulty =>  False, Send_messages_log => ''                                 , Receive_messages_log => [('Hello world', 'prepare', 0)]
 IdUser => 9, Role =>    Voter, Faulty =>  False, Send_messages_log => ''                                 , Receive_messages_log => [('Hello world', 'prepare', 0)]
 ------------------------------
 Commit Phase
-IdUser => 0, Role =>  Manager, Faulty =>   True, Send_messages_log => ('Hello world', 'prepare', 0)      , Receive_messages_log => [('Hello world', 'request', -1), ('Hello world', 'confirm', 6, 1), ('Hello world', 'confirm', 7, 1), ('Hello world', 'confirm', 8, 0), ('Hello world', 'confirm', 9, 0)]
+IdUser => 0, Role =>  Manager, Faulty =>  False, Send_messages_log => ('Hello world', 'prepare', 0)      , Receive_messages_log => [('Hello world', 'request', -1), ('Hello world', 'confirm', 7, 1), ('Hello world', 'confirm', 8, 1), ('Hello world', 'confirm', 9, 1)]
 IdUser => 1, Role =>  Manager, Faulty =>  False, Send_messages_log => ''                                 , Receive_messages_log => []
 IdUser => 2, Role =>  Manager, Faulty =>  False, Send_messages_log => ''                                 , Receive_messages_log => []
 IdUser => 3, Role =>  Manager, Faulty =>  False, Send_messages_log => ''                                 , Receive_messages_log => []
 IdUser => 4, Role =>  Manager, Faulty =>  False, Send_messages_log => ''                                 , Receive_messages_log => []
 IdUser => 5, Role =>  Manager, Faulty =>   True, Send_messages_log => ''                                 , Receive_messages_log => []
-IdUser => 6, Role =>    Voter, Faulty =>  False, Send_messages_log => ('Hello world', 'confirm', 6, 1)   , Receive_messages_log => [('Hello world', 'prepare', 0)]
+IdUser => 6, Role =>    Voter, Faulty =>   True, Send_messages_log => ''                                 , Receive_messages_log => [('Hello world', 'prepare', 0)]
 IdUser => 7, Role =>    Voter, Faulty =>  False, Send_messages_log => ('Hello world', 'confirm', 7, 1)   , Receive_messages_log => [('Hello world', 'prepare', 0)]
-IdUser => 8, Role =>    Voter, Faulty =>  False, Send_messages_log => ('Hello world', 'confirm', 8, 0)   , Receive_messages_log => [('Hello world', 'prepare', 0)]
-IdUser => 9, Role =>    Voter, Faulty =>  False, Send_messages_log => ('Hello world', 'confirm', 9, 0)   , Receive_messages_log => [('Hello world', 'prepare', 0)]
+IdUser => 8, Role =>    Voter, Faulty =>  False, Send_messages_log => ('Hello world', 'confirm', 8, 1)   , Receive_messages_log => [('Hello world', 'prepare', 0)]
+IdUser => 9, Role =>    Voter, Faulty =>  False, Send_messages_log => ('Hello world', 'confirm', 9, 1)   , Receive_messages_log => [('Hello world', 'prepare', 0)]
 ------------------------------
 Produce Block Phase
-Fail
+Complete
