@@ -28,7 +28,8 @@ class NodeList:
             print(e)
             return False
      
-    def create_message(self, current_node:Node, message:str, phase:str):
+    def create_message(self, idUser:int, message:str, phase:str):
+        current_node = self.find_node(idUser)
         current_node.create_message(message, phase)
     
     def send_message(self, origin_node:Node, destination_node:Node) -> bool:
@@ -39,8 +40,9 @@ class NodeList:
         else:
             return False
     
-    def receive_message(self, node:Node, message:tuple):
-        node.receive_messages_log.append(message)
+    def receive_message(self, idUser:int, message_form:tuple):
+        current_node = self.find_node(idUser)
+        current_node.receive_message(message_form)
     
     def find_node(self, idUser:int) -> Node:
         for node in self.nodelist:

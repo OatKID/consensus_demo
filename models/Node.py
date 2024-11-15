@@ -30,8 +30,8 @@ class Node:
         new_message = (message, phase, self.idUser, hashlib.sha256(f"{message} {phase} {self.idUser}".encode()).hexdigest())
         self.send_message_log = new_message
     
-    def receive_message(self):
-        pass
+    def receive_message(self, message:tuple):
+        self.receive_messages_log.append(message)
     
     def verify_own_message(self, phase:str) -> bool:
         flag = True

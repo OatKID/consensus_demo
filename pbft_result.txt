@@ -1,24 +1,12 @@
 Request Phase
 IdUser => 0, Faulty => False, Send_messages => ''                                 , Receive_messages => []
-IdUser => 1, Faulty => True , Send_messages => ''                                 , Receive_messages => []
-IdUser => 2, Faulty => False, Send_messages => ''                                 , Receive_messages => []
+IdUser => 1, Faulty => False, Send_messages => ''                                 , Receive_messages => []
+IdUser => 2, Faulty => True , Send_messages => ''                                 , Receive_messages => []
 IdUser => 3, Faulty => False, Send_messages => ''                                 , Receive_messages => []
 IdUser => 4, Faulty => False, Send_messages => ''                                 , Receive_messages => [('Hello world', 'request', -1)]
 IdUser => 5, Faulty => False, Send_messages => ''                                 , Receive_messages => []
 IdUser => 6, Faulty => False, Send_messages => ''                                 , Receive_messages => []
-IdUser => 7, Faulty => True , Send_messages => ''                                 , Receive_messages => []
-IdUser => 8, Faulty => False, Send_messages => ''                                 , Receive_messages => []
+IdUser => 7, Faulty => False, Send_messages => ''                                 , Receive_messages => []
+IdUser => 8, Faulty => True , Send_messages => ''                                 , Receive_messages => []
 IdUser => 9, Faulty => False, Send_messages => ''                                 , Receive_messages => []
-------------------------------
-Pre-Prepare Phase
-IdUser => 0, Faulty => False, Send_messages => ''                                 , Receive_messages => [(('Hello world', 'request', -1), 'pre-prepare', 4, '7e53f832cc81308e5779412feab0c3fbdc1c21bdb56dd18f27d6817fe529c109')]
-IdUser => 1, Faulty => True , Send_messages => ''                                 , Receive_messages => [(('Hello world', 'request', -1), 'pre-prepare', 4, '7e53f832cc81308e5779412feab0c3fbdc1c21bdb56dd18f27d6817fe529c109')]
-IdUser => 2, Faulty => False, Send_messages => ''                                 , Receive_messages => [(('Hello world', 'request', -1), 'pre-prepare', 4, '7e53f832cc81308e5779412feab0c3fbdc1c21bdb56dd18f27d6817fe529c109')]
-IdUser => 3, Faulty => False, Send_messages => ''                                 , Receive_messages => [(('Hello world', 'request', -1), 'pre-prepare', 4, '7e53f832cc81308e5779412feab0c3fbdc1c21bdb56dd18f27d6817fe529c109')]
-IdUser => 4, Faulty => False, Send_messages => (('Hello world', 'request', -1), 'pre-prepare', 4, '7e53f832cc81308e5779412feab0c3fbdc1c21bdb56dd18f27d6817fe529c109'), Receive_messages => [('Hello world', 'request', -1)]
-IdUser => 5, Faulty => False, Send_messages => ''                                 , Receive_messages => [(('Hello world', 'request', -1), 'pre-prepare', 4, '7e53f832cc81308e5779412feab0c3fbdc1c21bdb56dd18f27d6817fe529c109')]
-IdUser => 6, Faulty => False, Send_messages => ''                                 , Receive_messages => [(('Hello world', 'request', -1), 'pre-prepare', 4, '7e53f832cc81308e5779412feab0c3fbdc1c21bdb56dd18f27d6817fe529c109')]
-IdUser => 7, Faulty => True , Send_messages => ''                                 , Receive_messages => [(('Hello world', 'request', -1), 'pre-prepare', 4, '7e53f832cc81308e5779412feab0c3fbdc1c21bdb56dd18f27d6817fe529c109')]
-IdUser => 8, Faulty => False, Send_messages => ''                                 , Receive_messages => [(('Hello world', 'request', -1), 'pre-prepare', 4, '7e53f832cc81308e5779412feab0c3fbdc1c21bdb56dd18f27d6817fe529c109')]
-IdUser => 9, Faulty => False, Send_messages => ''                                 , Receive_messages => [(('Hello world', 'request', -1), 'pre-prepare', 4, '7e53f832cc81308e5779412feab0c3fbdc1c21bdb56dd18f27d6817fe529c109')]
 ------------------------------

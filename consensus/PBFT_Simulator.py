@@ -19,46 +19,46 @@ class PBFT_Simulator:
 
         # The primay node receives request-message from the client
         rec_message = (message, "request", -1) # -1 define to be the client which send a request
-        self.nodes.receive_message(self.primary_node, rec_message)
+        self.primary_node.receive_message(rec_message)
     
-    def broadcast_pre_prepare(self):
-        # The primary node create pre-prepare message to broadcast
-        self.nodes.create_message(self.primary_node, self.primary_node.receive_messages_log[0], "pre-prepare")
-        for node in self.nodes.get_all_nodes():
-            if node.idUser != self.primary_node.idUser:
-                self.nodes.send_message(self.primary_node, node)
+    # def broadcast_pre_prepare(self):
+    #     # The primary node create pre-prepare message to broadcast
+    #     self.nodes.create_message(self.primary_node.idUser, self.primary_node.get_own_message("request"))
+    #     for node in self.nodes.get_all_nodes():
+    #         if node.idUser != self.primary_node.idUser:
+    #             self.nodes.send_message(self.primary_node, node)
     
-    def broadcast_prepare(self):
-        for node in self.nodes.get_all_nodes():
-            if node.idUser != self.primary_node.idUser:
-                if node.verify_own_message("pre-prepare"):
-                    self.nodes.create_message(node, )
+    # def broadcast_prepare(self):
+    #     for node in self.nodes.get_all_nodes():
+    #         if node.idUser != self.primary_node.idUser:
+    #             if node.verify_own_message("pre-prepare"):
+    #                 self.nodes.create_message(node, )
     
-    def receive_prepare(self, message, index):
-        self.nodes[index].receive_messages_log.append(message)
+    # def receive_prepare(self, message, index):
+    #     self.nodes[index].receive_messages_log.append(message)
        
-    def broadcast_commit(self, current_node):
-        messages = current_node.filter_messages("prepare")
-        commit_message = (messages[0][0], "commit", current_node.idUser, random.randint(0, 1))
-        current_node.send_message_log = commit_message
-        for i in range(len(self.nodes)):
-            if (self.nodes[i] != current_node):
-                self.receive_commit(commit_message, i)
+    # def broadcast_commit(self, current_node):
+    #     messages = current_node.filter_messages("prepare")
+    #     commit_message = (messages[0][0], "commit", current_node.idUser, random.randint(0, 1))
+    #     current_node.send_message_log = commit_message
+    #     for i in range(len(self.nodes)):
+    #         if (self.nodes[i] != current_node):
+    #             self.receive_commit(commit_message, i)
     
-    def receive_commit(self, message, index):
-        self.nodes[index].receive_messages_log.append(message)
+    # def receive_commit(self, message, index):
+    #     self.nodes[index].receive_messages_log.append(message)
     
-    def reply_client(self, current_node):
-        count = 0
-        for message in current_node.receive_messages_log:
-            if message[1] == "commit":
-                if message[3]:
-                    count += 1
+    # def reply_client(self, current_node):
+    #     count = 0
+    #     for message in current_node.receive_messages_log:
+    #         if message[1] == "commit":
+    #             if message[3]:
+    #                 count += 1
         
-        if count >= 2 * self.num_faulty + 1:
-            return 1
-        else:
-            return 0
+    #     if count >= 2 * self.num_faulty + 1:
+    #         return 1
+    #     else:
+    #         return 0
     
     def get_nodes(self):
         for i in range(self.nodes.get_num_nodes()):
@@ -73,9 +73,9 @@ class PBFT_Simulator:
         self.get_nodes()
 
         # The leader node broadcasts to the other nodes (Pre-Prepare Phase)
-        print("Pre-Prepare Phase")
-        self.broadcast_pre_prepare()
-        self.get_nodes()
+        # print("Pre-Prepare Phase")
+        # self.broadcast_pre_prepare()
+        # self.get_nodes()
 
         # # Other nodes which exclude the leader node will broadcast other nodes (Prepare Phase)
         # print("Prepare Phase")
