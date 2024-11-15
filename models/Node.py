@@ -13,7 +13,7 @@ class Node:
         return self.blockchain.add_block(transaction, timestamp)
 
     def __repr__(self) -> str:
-        return f"IdUser => {self.idUser}, Faulty => {str(self.faulty):<5}, Send_messages => {str(self.send_message_log if self.send_message_log else "\'\'"):<35}, Receive_messages => {self.receive_messages_log}"
+        return f"IdUser => {self.idUser}, Faulty => {str(self.faulty):<5}, Send_messages => {str(self.send_message_log[0:3] if self.send_message_log else "\'\'"):<35}, Receive_messages => {self.receive_messages_log}"
 
     def clear_messages(self):
         self.send_message_log = ""
@@ -45,7 +45,8 @@ class Node:
                 flag = False
         return flag
     
-    def get_own_message(self, phase:str) -> str:
+    def get_own_message(self, phase:str) -> tuple:
         if self.verify_own_message(phase):
-            return self.filter_messages(phase)[0][0]
+            messages = self.filter_messages(phase)[0]
+            return messages
         return None

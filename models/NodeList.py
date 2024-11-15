@@ -28,9 +28,9 @@ class NodeList:
             print(e)
             return False
      
-    def create_message(self, idUser:int, message:str, phase:str):
+    def create_message(self, idUser:int, message:tuple, phase:str):
         current_node = self.find_node(idUser)
-        current_node.create_message(message, phase)
+        current_node.create_message(message[0], phase)
     
     def send_message(self, origin_node_idUser:int, destination_node_idUser:int) -> bool:
         origin_node = self.find_node(origin_node_idUser)
@@ -58,6 +58,3 @@ class NodeList:
 
     def get_all_nodes(self):
         return self.nodelist
-
-    def get_message(self, node:Node, phase:str):
-        pass
