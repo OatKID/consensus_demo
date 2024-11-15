@@ -32,10 +32,13 @@ class NodeList:
         current_node = self.find_node(idUser)
         current_node.create_message(message, phase)
     
-    def send_message(self, origin_node:Node, destination_node:Node) -> bool:
+    def send_message(self, origin_node_idUser:int, destination_node_idUser:int) -> bool:
+        origin_node = self.find_node(origin_node_idUser)
+        destination_node = self.find_node(destination_node_idUser)
+
         if origin_node.faulty != True:
             message = origin_node.send_message_log
-            self.receive_message(destination_node, message)
+            self.receive_message(destination_node.idUser, message)
             return True
         else:
             return False

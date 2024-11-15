@@ -34,6 +34,10 @@ class Node:
         self.receive_messages_log.append(message)
     
     def verify_own_message(self, phase:str) -> bool:
+
+        if phase == "request":
+            return True
+
         flag = True
         messages = self.filter_messages(phase)
         for message in messages:

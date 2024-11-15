@@ -21,12 +21,13 @@ class PBFT_Simulator:
         rec_message = (message, "request", -1) # -1 define to be the client which send a request
         self.primary_node.receive_message(rec_message)
     
-    # def broadcast_pre_prepare(self):
-    #     # The primary node create pre-prepare message to broadcast
-    #     self.nodes.create_message(self.primary_node.idUser, self.primary_node.get_own_message("request"))
-    #     for node in self.nodes.get_all_nodes():
-    #         if node.idUser != self.primary_node.idUser:
-    #             self.nodes.send_message(self.primary_node, node)
+    def broadcast_pre_prepare(self):
+        # The primary node create pre-prepare message to broadcast
+        message = self.primary_node.get_own_message("request")
+        self.primary_node.create_message(message[0], "pre-prepare")
+        for node in self.nodes.get_all_nodes():
+            if node.idUser != self.primary_node.idUser:
+                self.nodes.send_message(self.primary_node.idUser, node.idUser)
     
     # def broadcast_prepare(self):
     #     for node in self.nodes.get_all_nodes():
@@ -67,15 +68,15 @@ class PBFT_Simulator:
     
     def send_request(self, new_transaction:str):
 
-        # Start to recieve a request from the client
+        # * Start to recieve a request from the client
         print("Request Phase")
         self.receive_request(new_transaction)
         self.get_nodes()
 
-        # The leader node broadcasts to the other nodes (Pre-Prepare Phase)
-        # print("Pre-Prepare Phase")
-        # self.broadcast_pre_prepare()
-        # self.get_nodes()
+        # * The leader node broadcasts to the other nodes (Pre-Prepare Phase)
+        print("Pre-Prepare Phase")
+        self.broadcast_pre_prepare()
+        self.get_nodes()
 
         # # Other nodes which exclude the leader node will broadcast other nodes (Prepare Phase)
         # print("Prepare Phase")
