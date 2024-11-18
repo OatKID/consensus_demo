@@ -14,4 +14,11 @@ class QPBFT_Simulator:
     
     
     def send_request(self, message:str):
-        pass
+        
+        print("Request Phase")
+
+        print("Prepare Phase")
+
+        print("Commit Phase")
+
+        print("Generate-Block Phase")
