@@ -24,14 +24,14 @@ class QPBFT_NodeList:
             
             # * Random to select nodes to be faulty nodes
             if num_faulty > 0:
-                faulty_nodes = random.sample(new_nodes, k=num_faulty)
+                faulty_nodes = random.sample(new_nodes[1:], k=num_faulty)
             
                 for f_node in faulty_nodes:
                     f_node.faulty = True
             
             # * Random to select voting nodes to be malicious nodes
             if num_malicious > 0:
-                malicious_nodes = random.sample(new_nodes, k=num_malicious)
+                malicious_nodes = random.sample(new_nodes[1:], k=num_malicious)
                 for h_node in malicious_nodes:
                     h_node.is_mlicious = True
 
