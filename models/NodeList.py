@@ -62,3 +62,7 @@ class NodeList:
     def remove_phase_all_nodes(self, phase):
         for node in self.get_all_nodes():
             node.remove_phase(phase)
+    
+    def clear_messages_all_nodes(self):
+        for current_node in self.nodelist:
+            current_node.clear_all_messages()

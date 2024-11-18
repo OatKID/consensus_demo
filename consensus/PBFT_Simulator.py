@@ -67,13 +67,28 @@ class PBFT_Simulator:
                 pass
                 
         # * Verify commit messages to excute operation
+        if self.verify_committed_local() and self.verify_committed():
+            print("Successful")
+            self.success_proof += 1
+        else:
+            print("Fail")
     
-    # def committed_local(self, current_node:Node):
-    #     if self.verify_prepare(current_node)
-    
-    # def committed(self, current:Node):
-    #         pass
-
+    def verify_committed(self) -> bool:
+        count_replica = 0 # Count replicas whose verify prepared to be true
+        for current_node in self.nodes.get_all_nodes():
+            if self.verify_prepare(current_node) and current_node.faulty != True:
+                count_replica += 1
+        
+        if count_replica > self.num_faulty + 1:
+            return True
+        else:
+            return False
+            
+    def verify_committed_local(self) -> bool:
+        for current_node in self.nodes.get_all_nodes():
+            if self.verify_prepare(current_node) and current_node.get_num_messages_phase("commit") >= 2*self.num_faulty + 1 and current_node.faulty != True:
+                return True
+        return False
     
     def get_nodes(self):
         for i in range(self.nodes.get_num_nodes()):
@@ -98,10 +113,10 @@ class PBFT_Simulator:
         self.get_nodes()
 
         # # After each node have received prepare messages already, it will broadcast commit messages to make new block (Assume that the message is true)
-        # print("Commit Phase")
-        # self.broadcast_commit()
-        # self.get_nodes()
+        print("Commit Phase")
+        self.broadcast_commit()
+        self.get_nodes()
         
-        # # After each node have received commit messages already, it will verify those messages to create new block. and reply to the client.
-        # print("Reply Phase")
+        self.nodes.clear_messages_all_nodes()
+        
         
