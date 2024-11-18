@@ -14,6 +14,12 @@ class QPBFT_Simulator:
     
     def receive_request(self, message:str):
         pass
+
+    def boradcast_prepare(self):
+        pass
+    
+    def send_commit_message(self):
+        pass
     
     def send_request(self, message:str):
         
