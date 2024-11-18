@@ -53,8 +53,12 @@ class NodeList:
                 return node
         return None
 
-    def get_num_nodes(self):
+    def get_num_nodes(self) -> int:
         return len(self.nodelist)
 
-    def get_all_nodes(self):
+    def get_all_nodes(self) -> list[Node]:
         return self.nodelist
+    
+    def remove_phase_all_nodes(self, phase):
+        for node in self.get_all_nodes():
+            node.remove_phase(phase)

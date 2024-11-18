@@ -11,18 +11,18 @@ class PBFT_Simulator:
         self.sequence_number = 0
 
     def receive_request(self, message):
-        # Let choose the leader node to receive a request by using index
+        # * Let choose the leader node to receive a request by using index
         primary_node_index = random.randint(0, self.nodes.get_num_nodes()-1)
         while self.nodes.find_node(primary_node_index).faulty:
             primary_node_index = random.randint(0, self.nodes.get_num_nodes()-1)
         self.primary_node = self.nodes.find_node(primary_node_index)
 
-        # The primay node receives request-message from the client
+        # * The primay node receives request-message from the client
         rec_message = (message, "request", -1) # -1 define to be the client which send a request
         self.primary_node.receive_message(rec_message)
     
     def broadcast_pre_prepare(self):
-        # The primary node create pre-prepare message to broadcast
+        # * The primary node create pre-prepare message to broadcast
         message = self.primary_node.get_own_message("request")
         self.primary_node.create_message(message[0], "pre-prepare")
         for current_node in self.nodes.get_all_nodes():
@@ -34,18 +34,20 @@ class PBFT_Simulator:
                 message = current_node.get_own_message("pre-prepare")
                 self.nodes.create_message(current_node.idUser, message, "prepare")
                 for other_node in self.nodes.get_all_nodes():
-                    pass
-    
-    # def receive_prepare(self, message, index):
-    #     self.nodes[index].receive_messages_log.append(message)
+                    if current_node != other_node:
+                        self.nodes.send_message(current_node.idUser, other_node.idUser)
        
-    # def broadcast_commit(self, current_node):
-    #     messages = current_node.filter_messages("prepare")
-    #     commit_message = (messages[0][0], "commit", current_node.idUser, random.randint(0, 1))
-    #     current_node.send_message_log = commit_message
-    #     for i in range(len(self.nodes)):
-    #         if (self.nodes[i] != current_node):
-    #             self.receive_commit(commit_message, i)
+    def broadcast_commit(self):
+        for current_node in self.nodes.get_all_nodes():
+            if current_node.faulty != True:
+                if (current_node.verify_own_message("pre-prepare") or current_node.verify_own_message("request")) and current_node.verify_own_message("prepare"):
+                    message = current_node.get_own_message("prepare")
+                    self.nodes.create_message(current_node.idUser, message, "commit")
+                    for other_node in self.nodes.get_all_nodes():
+                        if current_node != other_node:
+                            self.nodes.send_message(current_node.idUser, other_node.idUser)
+            else:
+                continue
     
     # def receive_commit(self, message, index):
     #     self.nodes[index].receive_messages_log.append(message)
@@ -79,17 +81,17 @@ class PBFT_Simulator:
         self.broadcast_pre_prepare()
         self.get_nodes()
 
-        # # Other nodes which exclude the leader node will broadcast other nodes (Prepare Phase)
-        # print("Prepare Phase")
-        # self.broadcast_prepare()
-        # self.get_nodes()
+        # * Other nodes which exclude the leader node will broadcast other nodes (Prepare Phase)
+        print("Prepare Phase")
+        self.broadcast_prepare()
+        self.get_nodes()
 
         # # After each node have received prepare messages already, it will broadcast commit messages to make new block (Assume that the message is true)
-        # print("Commit Phase")
-        # for node in self.nodes:
-        #     if node.faulty == False:
-        #         self.broadcast_commit(node)
-        # self.get_nodes()
+        print("Commit Phase")
+        self.broadcast_commit()
+        self.nodes.remove_phase_all_nodes("prepare")
+        self.nodes.remove_phase_all_nodes("pre-prepare")
+        self.get_nodes()
         
         # # After each node have received commit messages already, it will verify those messages to create new block. and reply to the client.
         # print("Reply Phase")
@@ -109,5 +111,5 @@ class PBFT_Simulator:
         #     print("Fail in consensus")
         
         # for node in self.nodes:
-        #     node.clear_messages()
+        #     node.clear_all_messages()
         

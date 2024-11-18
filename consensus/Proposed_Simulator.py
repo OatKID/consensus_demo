@@ -118,4 +118,4 @@ class Proposed_Simulator:
         self.primary_node_index = self.select_primary_node()
 
         for node in self.nodes:
-            node.clear_messages()
+            node.clear_all_messages()

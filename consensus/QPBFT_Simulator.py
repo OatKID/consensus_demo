@@ -114,5 +114,5 @@ class QPBFT_Simulator:
                 break
         
         for node in self.nodes:
-            node.clear_messages()
+            node.clear_all_messages()
         
