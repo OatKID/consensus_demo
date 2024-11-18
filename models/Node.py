@@ -5,7 +5,7 @@ class Node:
         self.idUser = idUser
         self.blockchain = Blockchain()
         self.send_message_log = ""
-        self.receive_messages_log = []
+        self.messages_log = []
         self.faulty = faulty
         self.signature = secrets.token_urlsafe(16)
     
@@ -13,20 +13,20 @@ class Node:
         return self.blockchain.add_block(transaction, timestamp)
 
     def __repr__(self) -> str:
-        return f"IdUser => {self.idUser}, Faulty => {str(self.faulty):<5}, Send_messages => {str(self.send_message_log[0:3] if self.send_message_log else "\'\'"):<35}, Receive_messages => {self.receive_messages_log}"
+        return f"IdUser => {self.idUser}, Faulty => {str(self.faulty):<5}, Send_messages => {str(self.send_message_log[0:3] if self.send_message_log else "\'\'"):<35}, Receive_messages => {self.messages_log}"
 
     def clear_all_messages(self):
         self.send_message_log = ""
-        self.receive_messages_log.clear()
+        self.messages_log.clear()
     
     def remove_phase(self, phase:str):
         messages = self.filter_messages(phase)
         for message in messages:
-            self.receive_messages_log.remove(message)
+            self.messages_log.remove(message)
 
     def filter_messages(self, phase:str):
         new_messages = []
-        for message in self.receive_messages_log:
+        for message in self.messages_log:
             if message[1] == phase:
                 new_messages.append(message)
         return new_messages
@@ -36,12 +36,12 @@ class Node:
         self.send_message_log = new_message
     
     def receive_message(self, message:tuple):
-        self.receive_messages_log.append(message)
+        self.messages_log.append(message)
     
     def verify_own_message(self, phase:str) -> bool:
 
         if phase == "request":
-            message = self.receive_messages_log[0]
+            message = self.messages_log[0]
             if message[1] == "request":
                 return True
             else:
@@ -64,10 +64,11 @@ class Node:
             message2 = temp
         
         flag = True
-        for check_message in message2:
-            if check_message != message1:
-                flag = False
-                return flag
+        for check_message2 in message2:
+            for check_message1 in message1:
+                if check_message1 != check_message2:
+                    flag = True
+                    break
         return flag
         
     def get_own_message(self, phase:str) -> tuple:
@@ -75,3 +76,10 @@ class Node:
             messages = self.filter_messages(phase)[0]
             return messages
         return None
+
+    def get_num_messages_phase(self, phase:str):
+        count = 0
+        for message in self.messages_log:
+            if message[1] == phase:
+                count += 1
+        return count

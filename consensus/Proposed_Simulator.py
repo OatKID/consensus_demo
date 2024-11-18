@@ -42,7 +42,7 @@ class Proposed_Simulator:
         return primary_node_index
     
     def broadcast_internal(self):
-        message = self.proposed_nodes[self.primary_node_index].receive_messages_log[-1][0]
+        message = self.proposed_nodes[self.primary_node_index].messages_log[-1][0]
         prepare_message = (message, "prepare", self.proposed_nodes[self.primary_node_index].idUser)
         self.proposed_nodes[self.primary_node_index].send_message_log = prepare_message
         for node in self.proposed_nodes:
@@ -50,19 +50,19 @@ class Proposed_Simulator:
                 self.receive_prepare(node, prepare_message)
     
     def receive_prepare(self, node, message):
-        node.receive_messages_log.append(message)
+        node.messages_log.append(message)
 
     def reply_internal(self):
         for node in self.proposed_nodes:
             if node.idUser != self.proposed_nodes[self.primary_node_index].idUser:
-                message = node.receive_messages_log[-1]
+                message = node.messages_log[-1]
                 vote = random.randint(0, 1)
                 commit_message = (message[0], "commit", node.idUser, vote)
                 node.send_message_log = commit_message
-                self.proposed_nodes[self.primary_node_index].receive_messages_log.append(commit_message)
+                self.proposed_nodes[self.primary_node_index].messages_log.append(commit_message)
 
     def verify_vote(self):
-        messages = self.proposed_nodes[self.primary_node_index].receive_messages_log[1:]
+        messages = self.proposed_nodes[self.primary_node_index].messages_log[1:]
         count_vote = 0
         for message in messages:
             if message[3]:
@@ -82,7 +82,7 @@ class Proposed_Simulator:
         pass
     
     def receive_new_block(self, node, message):
-        node.receive_messages_log.append(message)
+        node.messages_log.append(message)
         if node.role.value == Role.MASTER.value:
             timestamp = str(datetime.now())
             node.add_block(message[0], timestamp)
@@ -90,7 +90,7 @@ class Proposed_Simulator:
     def send_request(self, request:str):
         # The client sends a request to proposed_nodes which there is a the primary node to receive a request.
         print("Request Phase")
-        self.proposed_nodes[self.primary_node_index].receive_messages_log.append((request, "request", -1))
+        self.proposed_nodes[self.primary_node_index].messages_log.append((request, "request", -1))
         self.print_nodes(self.proposed_nodes)
         
         # The primary node broadcast a request to other nodes in the group of proposed nodes.
