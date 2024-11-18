@@ -1,8 +1,5 @@
 from models.Node import Node
-from models.QPBFT_Node import QPBFT_Node
-from models.Proposed_Node import Proposed_Node
 import random
-import hashlib
 
 class NodeList:
     def __init__(self, num_node:int, num_faulty:int) -> None:
