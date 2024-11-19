@@ -4,6 +4,7 @@ from consensus.Proposed_Simulator import Proposed_Simulator
 import sys
 
 argument = sys.argv[1:]
+print(argument)
 
 match argument[0]:
     case "pbft":

@@ -90,7 +90,7 @@ class PBFT_Simulator:
                 return True
         return False
     
-    def get_nodes(self):
+    def print_nodes(self):
         for i in range(self.nodes.get_num_nodes()):
             print(self.nodes.find_node(i))
         print("-"*30)
@@ -100,22 +100,22 @@ class PBFT_Simulator:
         # * Start to recieve a request from the client
         print("Request Phase")
         self.receive_request(new_transaction)
-        self.get_nodes()
+        self.print_nodes()
 
         # * The leader node broadcasts to the other nodes (Pre-Prepare Phase)
         print("Pre-Prepare Phase")
         self.broadcast_pre_prepare()
-        self.get_nodes()
+        self.print_nodes()
 
         # * Other nodes which exclude the leader node will broadcast other nodes (Prepare Phase)
         print("Prepare Phase")
         self.broadcast_prepare()
-        self.get_nodes()
+        self.print_nodes()
 
         # # After each node have received prepare messages already, it will broadcast commit messages to make new block (Assume that the message is true)
         print("Commit Phase")
         self.broadcast_commit()
-        self.get_nodes()
+        self.print_nodes()
         
         self.nodes.clear_messages_all_nodes()
         

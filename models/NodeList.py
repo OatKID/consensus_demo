@@ -23,7 +23,7 @@ class NodeList:
 
         except ValueError as e:
             print(e)
-            return False
+            return []
      
     def create_message(self, idUser:int, message:tuple, phase:str):
         current_node = self.find_node(idUser)
