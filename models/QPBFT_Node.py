@@ -9,7 +9,7 @@ class QPBFT_Node(Node):
         self.is_mailcious = malicious
     
     def __repr__(self) -> str:
-        return f"IdUser => {self.idUser}, Role => {self.role.value:>8}, Faulty => {str(self.faulty):>6}, send_message_log => {str(self.send_message_log if self.send_message_log else "\'\'"):<35}, messages_log => {self.messages_log}"
+        return f"IdUser => {self.idUser}, Role => {self.role.value:>8}, Faulty => {str(self.faulty):>6}, send_message_log => {str(self.send_message_log[:-1] if self.send_message_log else "\'\'"):<35}, messages_log => {self.messages_log}"
     
     def _generate_score(self, num_value):
         array = []

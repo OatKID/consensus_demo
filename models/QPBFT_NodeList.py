@@ -78,5 +78,8 @@ class QPBFT_NodeList:
         current_node = self.find_node(idUser)
         current_node.receive_message(message_form)
     
-    def get_num_nodes(self):
-        return len(self.nodelist)
+    def get_num_nodes(self, role:Role=None):
+        if role == None:
+            return len(self.nodelist)
+        else:
+            return len(self.get_all_nodes(Role.VOTER))
