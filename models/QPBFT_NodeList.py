@@ -83,3 +83,7 @@ class QPBFT_NodeList:
             return len(self.nodelist)
         else:
             return len(self.get_all_nodes(Role.VOTER))
+    
+    def clear_messages_all_nodes(self):
+        for current_node in self.nodelist:
+            current_node.clear_all_messages()

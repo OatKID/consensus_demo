@@ -24,7 +24,6 @@ class QPBFT_Simulator:
     
 
     def boradcast_prepare(self):
-
         for current_node in self.nodes.get_all_nodes():
             if current_node != self.primary_node and current_node.role.value == "Voter":
                 self.nodes.send_message(self.primary_node.idUser, current_node.idUser)
@@ -32,13 +31,15 @@ class QPBFT_Simulator:
     
     def send_confirm_messages(self):
         # * Verfity messages whelter is not tampered and send it to the primary node.
+        print([node.idUser for node in self.nodes.get_all_nodes(Role.VOTER)])
         for voting_node in self.nodes.get_all_nodes(Role.VOTER):
             if voting_node.verify_own_message("prepare") and voting_node.faulty != True:
                 self.nodes.create_message(voting_node.idUser, voting_node.get_own_message("prepare"), "confirm")
                 self.nodes.send_message(voting_node.idUser, self.primary_node.idUser)
     
     def verify_confirm_messages(self) -> bool:
-        if self.primary_node.compare_phase("prepare", "confirm") and self.primary_node.get_num_messages_phase("confirm") >= 1 + (self.nodes.get_num_nodes()//2):
+        
+        if self.primary_node.compare_phase("prepare", "confirm") and self.primary_node.get_num_messages_phase("confirm") >= 1 + (self.nodes.get_num_nodes(Role.VOTER)//2):
             return True
         else:
             return False
@@ -50,8 +51,6 @@ class QPBFT_Simulator:
     
     def send_request(self, message:str):
 
-
-        
         print("Request Phase")
         self.receive_request(message)
         self.print_nodes()
@@ -67,5 +66,8 @@ class QPBFT_Simulator:
         print("Generate-Block Phase")
         if self.verify_confirm_messages():
             print("Successful")
+            self.success_proof += 1
         else:
             print("Fail")
+        
+        self.nodes.clear_messages_all_nodes()
