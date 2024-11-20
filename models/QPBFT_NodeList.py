@@ -1,10 +1,11 @@
 from models.QPBFT_Node import QPBFT_Node
 import random
 from models.Role import Role
-
+import numpy
 class QPBFT_NodeList:
     def __init__(self, num_manager, num_voter, num_faulty) -> None:
         self.nodelist = self.generate_nodes(num_manager, num_voter, num_faulty)
+        self.node_filter = []
     
     def generate_nodes(self, num_manager, num_voter, num_faulty):
         new_nodes = []
@@ -87,3 +88,24 @@ class QPBFT_NodeList:
     def clear_messages_all_nodes(self):
         for current_node in self.nodelist:
             current_node.clear_all_messages()
+    
+    def calcuate_reliable_score(self):
+        weight = numpy.array([0.0675, 0.2521, 0.3743, 0.0631, 0.0072, 0.0197])
+        scores = numpy.array([])
+        for node in self.nodelist:
+            node_reliability_score = numpy.array(node.generate_score())
+            score = numpy.dot(weight, node_reliability_score)
+            scores = numpy.append(scores, score)
+        
+        min_score = numpy.min(scores)
+        max_score = numpy.max(scores)
+
+        differenct = max_score - min_score
+        for i in range(self.get_num_nodes()):
+            normalized_score = (scores[i] - min_score)/differenct
+            node:QPBFT_Node = self.nodelist[i]
+            node.set_relibable_score(normalized_score)
+            
+    # def filter_node(self):
+    #     self.calcuate_reliable_score()
+        
