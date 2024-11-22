@@ -8,7 +8,7 @@ class Proposed_Node(Node):
         self.priority = random.randint(0, 100)
     
     def __repr__(self) -> str:
-        return f"IdUser => {self.idUser}, Role => {self.role.value:>7}, send_message_log => {str(self.send_message_log if self.send_message_log else "\'\'"):<35}, messages_log => {self.messages_log}"
+        return f"IdUser => {self.idUser}, Role => {self.role.value:>7}, Faulty => {str(self.faulty):>6},send_message_log => {str(self.send_message_log if self.send_message_log else "\'\'"):<35}, messages_log => {self.messages_log}"
 
     
 

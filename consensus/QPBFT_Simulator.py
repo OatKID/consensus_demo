@@ -17,7 +17,7 @@ class QPBFT_Simulator:
             self.primary_node = self.nodes.find_node(0)
         else:
             while self.primary_node.faulty:
-                self.primary_node = random.sample(self.nodes.get_all_nodes(Role.MANAGER), k=1)
+                self.primary_node = random.choice(self.nodes.get_all_nodes(Role.MANAGER))
         
         self.primary_node.create_message(message, "prepare")
         self.primary_node.receive_message(self.primary_node.send_message_log)
