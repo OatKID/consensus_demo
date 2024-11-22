@@ -63,3 +63,13 @@ class NodeList:
     def clear_messages_all_nodes(self):
         for current_node in self.nodelist:
             current_node.clear_all_messages()
+    
+    # * Set faulty node in each next round
+    def random_faulty(self, num_fualty:int):
+        for node in self.nodelist:
+            node.faulty = False
+        
+        faulty_nodes = random.sample(self.nodelist, k=num_fualty)
+
+        for f_node in faulty_nodes:
+            f_node.faulty = True

@@ -29,13 +29,6 @@ class QPBFT_NodeList:
             
                 for f_node in faulty_nodes:
                     f_node.faulty = True
-            
-            # ! Don't Use it as in the simulator that has no malicious node.
-            # * Random to select voting nodes to be malicious nodes
-            # if num_malicious > 0:
-            #     malicious_nodes = random.sample(new_nodes[1:], k=num_malicious)
-            #     for h_node in malicious_nodes:
-            #         h_node.is_mlicious = True
 
             return new_nodes
 
@@ -108,4 +101,13 @@ class QPBFT_NodeList:
             
     # def filter_node(self):
     #     self.calcuate_reliable_score()
+    
+    # * Set faulty node in each next round
+    def random_faulty(self, num_fualty:int):
+        for node in self.nodelist:
+            node.faulty = False
         
+        faulty_nodes = random.sample(self.nodelist, k=num_fualty)
+
+        for f_node in faulty_nodes:
+            f_node.faulty = True

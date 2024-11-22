@@ -112,11 +112,12 @@ class PBFT_Simulator:
         self.broadcast_prepare()
         self.print_nodes()
 
-        # # After each node have received prepare messages already, it will broadcast commit messages to make new block (Assume that the message is true)
+        # * After each node have received prepare messages already, it will broadcast commit messages to make new block (Assume that the message is true)
         print("Commit Phase")
         self.broadcast_commit()
         self.print_nodes()
         
         self.nodes.clear_messages_all_nodes()
+        self.nodes.random_faulty(self.num_faulty)
         
         
