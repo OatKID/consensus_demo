@@ -66,8 +66,8 @@ class Node:
         flag = True
         for check_message2 in message2:
             for check_message1 in message1:
-                if check_message1 != check_message2:
-                    flag = True
+                if check_message1[0] != check_message2[0]:
+                    flag = False
                     break
         return flag
         
