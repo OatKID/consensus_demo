@@ -4,7 +4,7 @@ from models.Role import Role
 import numpy
 class QPBFT_NodeList:
     def __init__(self, num_manager, num_voter, num_faulty) -> None:
-        self.nodelist = self.generate_nodes(num_manager, num_voter, num_faulty)
+        self.nodelist:list[QPBFT_Node] = self.generate_nodes(num_manager, num_voter, num_faulty)
         self.node_filter = []
     
     def generate_nodes(self, num_manager, num_voter, num_faulty):
@@ -46,14 +46,28 @@ class QPBFT_NodeList:
         current_node = self.find_node(idUser)
         current_node.create_message(message[0], phase)
     
-    def get_all_nodes(self, role:Role=None) -> list[QPBFT_Node]:
+    def get_all_nodes(self, role:Role=None, filter=False, include_faulty=True) -> list[QPBFT_Node]:
+        # * If role isn't defined 
         if role == None:
-            return self.nodelist
+            if filter == False:
+                return self.nodelist
+            else:
+                return self.node_filter
 
+        # * If Role is defined
         filter_node = []
-        for node in self.nodelist:
-            if node.role.value == role.value:
-                filter_node.append(node)
+        if filter == False:
+            nodelist = self.nodelist
+        else:
+            nodelist = self.node_filter
+        
+        for node in nodelist:
+            if include_faulty == True:
+                if node.role.value == role.value:
+                    filter_node.append(node)
+            else:
+                if node.role.value == role.value and node.faulty == False:
+                    filter_node.append(node)
         
         return filter_node
 
@@ -72,11 +86,17 @@ class QPBFT_NodeList:
         current_node = self.find_node(idUser)
         current_node.receive_message(message_form)
     
-    def get_num_nodes(self, role:Role=None):
+    def get_num_nodes(self, role:Role=None, filter=False):
         if role == None:
-            return len(self.nodelist)
+            if filter == False:
+                return len(self.nodelist)
+            else:
+                return len(self.node_filter)
         else:
-            return len(self.get_all_nodes(Role.VOTER))
+            if filter == False:
+                return len(self.get_all_nodes(role))
+            else:
+                return len(self.get_all_nodes(role, filter=True))
     
     def clear_messages_all_nodes(self):
         for current_node in self.nodelist:
@@ -86,9 +106,13 @@ class QPBFT_NodeList:
         weight = numpy.array([0.0675, 0.2521, 0.3743, 0.0631, 0.0072, 0.0197])
         scores = numpy.array([])
         for node in self.nodelist:
-            node_reliability_score = numpy.array(node.generate_score())
-            score = numpy.dot(weight, node_reliability_score)
-            scores = numpy.append(scores, score)
+            # * First time in consensus algorithm
+            if node.reliable_score == 0:
+                node_reliability_score = numpy.array(node.generate_score())
+                score = numpy.dot(weight, node_reliability_score)
+                node.set_reliable_score(score)
+            
+            scores = numpy.append(scores, node.reliable_score)
         
         min_score = numpy.min(scores)
         max_score = numpy.max(scores)
@@ -97,10 +121,13 @@ class QPBFT_NodeList:
         for i in range(self.get_num_nodes()):
             normalized_score = (scores[i] - min_score)/differenct
             node:QPBFT_Node = self.nodelist[i]
-            node.set_relibable_score(normalized_score)
+            node.set_reliable_score(normalized_score)
             
-    # def filter_node(self):
-    #     self.calcuate_reliable_score()
+    def filter_node(self):
+        self.calcuate_reliable_score()
+        for node in self.nodelist:
+            if (node.reliable_score >= 0.6 and node.reliable_score <= 1) or (node.idUser == 0):
+                self.node_filter.append(node)
     
     # * Set faulty node in each next round
     def random_faulty(self, num_fualty:int):
@@ -111,3 +138,7 @@ class QPBFT_NodeList:
 
         for f_node in faulty_nodes:
             f_node.faulty = True
+    
+    # * Clear node list which is filtered
+    def clear_node_filter(self):
+        self.node_filter.clear()
