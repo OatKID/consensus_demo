@@ -42,6 +42,12 @@ class Proposed_Simulator:
             if current_node.faulty != True and current_node != self.primary_node and current_node.verify_own_message("prepare"):
                 self.nodes.create_message(current_node.idUser, current_node.get_own_message("prepare"), "confirm")
                 self.nodes.send_message(current_node.idUser, self.primary_node.idUser)
+    
+    def verify_confirm_message(self) -> bool:
+        if self.primary_node.compare_phase("prepare", "confirm") and self.primary_node.get_num_messages_phase("confirm") >= 2 * self.nodes.get_num_nodes(filter=True)//3 :
+            return True
+        else:
+            return False
         
 
     def send_request(self, request:str):
@@ -57,9 +63,23 @@ class Proposed_Simulator:
         self.print_nodes(filter=True)
 
         """
-        * 1. The internal nodes will verify a own prepare-message whether is not tampered.
-        * 2. If a own prepare-message is not tampered in each node, it will create a confirm-message and send it to the primary node. 
+            * 1. The internal nodes will verify a own prepare-message whether is not tampered.
+            * 2. If a own prepare-message is not tampered in each node, it will create a confirm-message and send it to the primary node. 
         """
         print("Confirm Phase")
         self.reply_confirm_message()
         self.print_nodes(filter=True)
+        
+        
+        """
+            * The primary node will verify confirm-messages at least 2/3 of internal node.
+            * If it is true, it will broadcast other nodes to make new block. It includes the primary node.
+        """
+        print("Generate-Block")
+        if self.verify_confirm_message():
+            print("Successful")
+            self.success_proof += 1
+        else:
+            print("Fail")
+        
+        
