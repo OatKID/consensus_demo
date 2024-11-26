@@ -83,3 +83,8 @@ class Proposed_Simulator:
             print("Fail")
         
         
+        # * Clear log to do next round
+        self.nodes.clear_messages_all_nodes()
+        self.nodes.random_faulty(self.num_faulty)
+        self.nodes.clear_node_filter()
+        
