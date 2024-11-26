@@ -39,7 +39,7 @@ class Proposed_NodeList:
     
     def select_nodes_consensus(self, num_nodes:int):
         node_filter = self.get_all_nodes(include_faulty=False)
-        self.node_filter = random.choices(node_filter, k=num_nodes)
+        self.node_filter = random.sample(node_filter, k=num_nodes)
         
 
     def find_node(self, idUser:int) -> Proposed_Node:

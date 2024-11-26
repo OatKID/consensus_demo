@@ -14,7 +14,7 @@ class Proposed_Simulator:
     def select_primary_node(self):
         self.nodes.normalize_priority()
         node_filter = self.nodes.get_all_nodes(filter=True)
-        sorted(node_filter, key=lambda node: node.priority)
+        node_filter.sort(key=lambda node: node.priority, reverse=True)
         for node in node_filter:
             if node.faulty == False:
                 self.primary_node = node
@@ -26,15 +26,35 @@ class Proposed_Simulator:
         print("-"*30)
 
     def receive_request(self, message:str):
-
         self.nodes.select_nodes_consensus(self.num_proposed_nodes)
         self.select_primary_node()
-        self.primary_node.receive_message((message, "request", -1))
+
         self.primary_node.create_message(message, "prepare")
+        self.primary_node.receive_message(self.primary_node.send_message_log)
+
+    def broadcast_internal(self):
+        for current_node in self.nodes.get_all_nodes(filter=True):
+            if current_node.faulty != True and current_node != self.primary_node:
+                self.nodes.send_message(self.primary_node.idUser, current_node.idUser)
+    
+    def reply_confirm_message(self):
+        for current_node in self.nodes.get_all_nodes(filter=True):
+            if current_node.faulty != True and current_node != self.primary_node and current_node.verify_own_message("prepare"):
+                self.nodes.create_message(current_node.idUser, current_node.get_own_message("prepare"), "confirm")
+                self.nodes.send_message(current_node.idUser, self.primary_node.idUser)
+        
 
     def send_request(self, request:str):
         
-        # The client sends a request to proposed_nodes which there is a the primary node to receive a request.
+        # * The client sends a request to proposed_nodes which there is a the primary node to receive a request.
         print("Request Phase")
         self.receive_request(request)
-        self.print_nodes()
+        self.print_nodes(filter=True)
+
+        print("Prepare Phase")
+        self.broadcast_internal()
+        self.print_nodes(filter=True)
+
+        print("Confirm Phase")
+        self.reply_confirm_message()
+        self.print_nodes(filter=True)
