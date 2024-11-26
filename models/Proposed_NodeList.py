@@ -1,6 +1,7 @@
 from models.Proposed_Node import Proposed_Node
 from models.Role import Role
 import random
+import numpy
 
 class Proposed_NodeList:
     def __init__(self, num_master:int, num_slave:int, num_faulty:int=0) -> None:
@@ -35,6 +36,11 @@ class Proposed_NodeList:
         except ValueError as e:
             print(e)
             return []
+    
+    def select_nodes_consensus(self, num_nodes:int):
+        node_filter = self.get_all_nodes(include_faulty=False)
+        self.node_filter = random.choices(node_filter, k=num_nodes)
+        
 
     def find_node(self, idUser:int) -> Proposed_Node:
         for node in self.nodelist:
@@ -111,3 +117,20 @@ class Proposed_NodeList:
     
     def clear_node_filter(self):
         self.node_filter.clear()
+    
+    def normalize_priority(self):
+        priority_values = numpy.array([])
+        for node in self.nodelist:
+            priority_values = numpy.append(priority_values, node.priority)
+        
+        max_value = numpy.max(priority_values)
+        min_value = numpy.min(priority_values)
+
+        different = max_value - min_value
+
+        for i in range(self.get_num_nodes()):
+            value = (priority_values[i] - min_value)/(different*1.0)
+            node:Proposed_Node = self.nodelist[i]
+            node.priority = value
+
+
