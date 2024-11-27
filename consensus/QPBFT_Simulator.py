@@ -74,6 +74,11 @@ class QPBFT_Simulator:
             self.success_proof += 1
             self.primary_node.reliable_score += 1
             self.give_score()
+
+            timestamp = str(datetime.now())
+            for node in self.nodes.get_all_nodes():
+                if node.role == Role.MASTER:
+                    node.add_block(message, timestamp)
         else:
             print("Fail")
             self.primary_node.reliable_score -= 1

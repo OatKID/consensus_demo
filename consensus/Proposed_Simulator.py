@@ -44,7 +44,7 @@ class Proposed_Simulator:
                 self.nodes.send_message(current_node.idUser, self.primary_node.idUser)
     
     def verify_confirm_message(self) -> bool:
-        if self.primary_node.compare_phase("prepare", "confirm") and self.primary_node.get_num_messages_phase("confirm") >= 2 * self.nodes.get_num_nodes(filter=True)//3 :
+        if self.primary_node.compare_phase("prepare", "confirm") and self.primary_node.get_num_messages_phase("confirm") >= (2 * self.nodes.get_num_nodes(filter=True))//3 :
             return True
         else:
             return False
@@ -79,6 +79,10 @@ class Proposed_Simulator:
         if self.verify_confirm_message():
             print("Successful")
             self.success_proof += 1
+
+            timestamp = str(datetime.now())
+            for node in self.nodes.get_all_nodes():
+                node.add_block(request, timestamp)
         else:
             print("Fail")
         

@@ -74,6 +74,10 @@ class PBFT_Simulator:
         if self.verify_committed_local() and self.verify_committed():
             print("Successful")
             self.success_proof += 1
+            message = self.primary_node.get_own_message("pre-prepare")
+            timestamp = str(datetime.datetime.now())
+            for node in self.nodes.get_all_nodes():
+                node.add_block(message, timestamp)
         else:
             print("Fail")
     
