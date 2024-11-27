@@ -123,5 +123,6 @@ class PBFT_Simulator:
         
         self.nodes.clear_messages_all_nodes()
         self.nodes.random_faulty(self.num_faulty)
+        self.view_number += 1
         
         

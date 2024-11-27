@@ -13,7 +13,7 @@ class Node:
         return self.blockchain.add_block(transaction, timestamp)
 
     def __repr__(self) -> str:
-        return f"IdUser => {self.idUser}, Faulty => {str(self.faulty):<5}, Send_messages => {str(self.send_message_log[0:3] if self.send_message_log else "\'\'"):<35}, Receive_messages => {self.messages_log}"
+        return f"IdUser => {self.idUser}, Faulty => {str(self.faulty):<5}, Send_Message => {str(self.send_message_log[0:3] if self.send_message_log else "\'\'"):<35}, Messages_Log => {self.messages_log}"
 
     def clear_all_messages(self):
         self.send_message_log = ""
