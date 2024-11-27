@@ -134,7 +134,7 @@ class QPBFT_NodeList:
         for node in self.nodelist:
             node.faulty = False
         
-        faulty_nodes = random.sample(self.nodelist, k=num_fualty)
+        faulty_nodes = random.sample(self.nodelist[1:], k=num_fualty)
 
         for f_node in faulty_nodes:
             f_node.faulty = True
