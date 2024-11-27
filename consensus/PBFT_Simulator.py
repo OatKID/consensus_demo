@@ -2,20 +2,24 @@ from models.Node import Node
 import random, datetime
 from models.NodeList import NodeList
 class PBFT_Simulator:
-    def __init__(self, num_node:int, num_faulty:int=0) -> None:
+    def __init__(self, num_nodes:int, num_faulty:int=0) -> None:
         self.num_faulty = num_faulty
-        self.nodes = NodeList(num_node, num_faulty)
+        self.nodes = NodeList(num_nodes, num_faulty)
         self.primary_node:Node = None
         self.success_proof = 0
         self.view_number = 0
-        self.sequence_number = 0
+        self.num_nodes = num_nodes
+        # self.sequence_number = 0
+
 
     def receive_request(self, message):
         # * Let choose the leader node to receive a request by using index
-        primary_node_index = random.randint(0, self.nodes.get_num_nodes()-1)
-        while self.nodes.find_node(primary_node_index).faulty:
-            primary_node_index = random.randint(0, self.nodes.get_num_nodes()-1)
-        self.primary_node = self.nodes.find_node(primary_node_index)
+        primary_node_index = self.view_number % self.num_nodes
+        while self.nodes.nodelist[primary_node_index].faulty == True:
+            self.view_number += 1
+            primary_node_index = self.view_number % self.num_nodes
+
+        self.primary_node = self.nodes.nodelist[primary_node_index]
 
         # * The primary node receive the request and make a pre-prepare message to insert its log.
         self.primary_node.create_message(message, "pre-prepare")

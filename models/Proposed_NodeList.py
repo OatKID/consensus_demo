@@ -12,14 +12,14 @@ class Proposed_NodeList:
         new_nodes = []
         try:
             if num_master + num_slave <= num_faulty:
-                raise ValueError("the number of management and voting nodes are more than or equal to the number of faulty nodes")
+                raise ValueError("The number of master and slave nodes are more than or equal to the number of faulty nodes")
             
-            # * Make the management nodes
+            # * Make the Master nodes
             for i in range(num_master):
                 new_node = Proposed_Node(i, role=Role.MASTER)
                 new_nodes.append(new_node)
             
-            # * Make the voting node
+            # * Make the Slave node
             for i in range(num_master, num_master+num_slave):
                 new_node = Proposed_Node(i, role=Role.SLAVE)
                 new_nodes.append(new_node)
