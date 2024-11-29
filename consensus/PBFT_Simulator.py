@@ -106,24 +106,24 @@ class PBFT_Simulator:
     def send_request(self, new_transaction:str):
 
         # * Start to recieve a request from the client
-        print("Request Phase")
+        # //print("Request Phase")
         self.receive_request(new_transaction)
-        self.print_nodes()
+        # //self.print_nodes()
 
         # * The leader node broadcasts to the other nodes (Pre-Prepare Phase)
-        print("Pre-Prepare Phase")
+        # //print("Pre-Prepare Phase")
         self.broadcast_pre_prepare()
-        self.print_nodes()
+        # //self.print_nodes()
 
         # * Other nodes which exclude the leader node will broadcast other nodes (Prepare Phase)
-        print("Prepare Phase")
+        # //print("Prepare Phase")
         self.broadcast_prepare()
-        self.print_nodes()
+        # //self.print_nodes()
 
         # * After each node have received prepare messages already, it will broadcast commit messages to make new block (Assume that the message is true)
-        print("Commit Phase")
+        # //print("Commit Phase")
         self.broadcast_commit()
-        self.print_nodes()
+        # //self.print_nodes()
         
         self.nodes.clear_messages_all_nodes()
         self.nodes.random_faulty(self.num_faulty)

@@ -56,19 +56,19 @@ class QPBFT_Simulator:
 
         self.nodes.filter_node()
 
-        print("Request Phase")
+        # //print("Request Phase")
         self.receive_request(message)
-        self.print_nodes(filter=True)
+        # //self.print_nodes(filter=True)
 
-        print("Prepare Phase")
+        # //print("Prepare Phase")
         self.boradcast_prepare()
-        self.print_nodes(filter=True)
+        # //self.print_nodes(filter=True)
 
-        print("Confirm Phase")
+        # //print("Confirm Phase")
         self.send_confirm_messages()
-        self.print_nodes(filter=True)
+        # //self.print_nodes(filter=True)
 
-        print("Generate-Block Phase")
+        # //print("Generate-Block Phase")
         if self.verify_confirm_messages():
             print("Successful")
             self.success_proof += 1
