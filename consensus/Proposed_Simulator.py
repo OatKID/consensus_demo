@@ -4,12 +4,13 @@ from models.Role import Role
 import random
 from datetime import datetime
 class Proposed_Simulator:
-    def __init__(self, num_master:int, num_slave:int, k:int, num_faulty:int=0) -> None:
+    def __init__(self, num_master:int, num_slave:int, k:int, num_faulty:int=0, output=False) -> None:
         self.num_faulty = num_faulty
         self.num_proposed_nodes = k
         self.nodes = Proposed_NodeList(num_master, num_slave, num_faulty)
         self.primary_node = None
         self.success_proof = 0
+        self.output = output
     
     def select_primary_node(self):
         self.nodes.normalize_priority()
@@ -20,10 +21,12 @@ class Proposed_Simulator:
                 self.primary_node = node
                 break
     
-    def print_nodes(self, filter=False):
-        for node in self.nodes.get_all_nodes(filter=filter):
-            print(node)
-        print("-"*30)
+    def print_nodes(self, name_phase:str, filter=False):
+        if self.output:
+            print(name_phase)
+            for node in self.nodes.get_all_nodes(filter=filter):
+                print(node)
+            print("-"*30)
 
     def receive_request(self, message:str):
         self.nodes.select_nodes_consensus(self.num_proposed_nodes)
@@ -53,29 +56,25 @@ class Proposed_Simulator:
     def send_request(self, request:str):
         
         # * The client sends a request to proposed_nodes which there is a the primary node to receive a request.
-        # //print("Request Phase")
         self.receive_request(request)
-        # //self.print_nodes(filter=True)
+        self.print_nodes("Request Phase", filter=True)
 
         # * The primary node will broadcast a prepare-message to other internal nodes
-        # //print("Prepare Phase")
         self.broadcast_internal()
-        # //self.print_nodes(filter=True)
+        self.print_nodes("Prepare Phase", filter=True)
 
         """
             * 1. The internal nodes will verify a own prepare-message whether is not tampered.
             * 2. If a own prepare-message is not tampered in each node, it will create a confirm-message and send it to the primary node. 
         """
-        # //print("Confirm Phase")
         self.reply_confirm_message()
-        # //self.print_nodes(filter=True)
+        self.print_nodes("Confirm Phase", filter=True)
         
         
         """
             * The primary node will verify confirm-messages at least 2/3 of internal node.
             * If it is true, it will broadcast other nodes to make new block. It includes the primary node.
         """
-        # //print("Generate-Block")
         if self.verify_confirm_message():
             print("Successful")
             self.success_proof += 1

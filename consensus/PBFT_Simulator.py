@@ -2,14 +2,14 @@ from models.Node import Node
 import random, datetime
 from models.NodeList import NodeList
 class PBFT_Simulator:
-    def __init__(self, num_nodes:int, num_faulty:int=0) -> None:
+    def __init__(self, num_nodes:int, num_faulty:int=0, output=False) -> None:
         self.num_faulty = num_faulty
         self.nodes = NodeList(num_nodes, num_faulty)
         self.primary_node:Node = None
         self.success_proof = 0
         self.view_number = 0
         self.num_nodes = num_nodes
-        # self.sequence_number = 0
+        self.output = output
 
 
     def receive_request(self, message):
@@ -98,35 +98,32 @@ class PBFT_Simulator:
                 return True
         return False
     
-    def print_nodes(self):
-        for i in range(self.nodes.get_num_nodes()):
-            print(self.nodes.find_node(i))
-        print("-"*30)
+    def print_nodes(self, name_phase:str):
+        if self.output:
+            print(name_phase)
+            for i in range(self.nodes.get_num_nodes()):
+                print(self.nodes.find_node(i))
+            print("-"*30)
     
     def send_request(self, new_transaction:str):
 
         # * Start to recieve a request from the client
-        # //print("Request Phase")
         self.receive_request(new_transaction)
-        # //self.print_nodes()
+        self.print_nodes("Request Phase")
 
         # * The leader node broadcasts to the other nodes (Pre-Prepare Phase)
-        # //print("Pre-Prepare Phase")
         self.broadcast_pre_prepare()
-        # //self.print_nodes()
+        self.print_nodes("Pre-Prepare Phase")
 
         # * Other nodes which exclude the leader node will broadcast other nodes (Prepare Phase)
-        # //print("Prepare Phase")
         self.broadcast_prepare()
-        # //self.print_nodes()
+        self.print_nodes("Prepare Phase")
 
         # * After each node have received prepare messages already, it will broadcast commit messages to make new block (Assume that the message is true)
-        # //print("Commit Phase")
         self.broadcast_commit()
-        # //self.print_nodes()
+        self.print_nodes("Commit Phase")
         
         self.nodes.clear_messages_all_nodes()
         self.nodes.random_faulty(self.num_faulty)
         self.view_number += 1
-        
         

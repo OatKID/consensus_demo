@@ -4,13 +4,14 @@ from datetime import datetime
 from models.QPBFT_NodeList import QPBFT_NodeList
 import random
 class QPBFT_Simulator:
-    def __init__(self, num_management:int, num_vote:int, num_faulty:int=0) -> None:
+    def __init__(self, num_management:int, num_vote:int, num_faulty:int=0, output=False) -> None:
         self.num_faulty = num_faulty
         self.nodes = QPBFT_NodeList(num_management, num_vote, num_faulty)
         self.primary_node:QPBFT_Node = None
         self.num_management = num_management
         self.num_vote = num_vote
         self.success_proof = 0
+        self.output = output
     
     def receive_request(self, message:str):
         if self.primary_node == None:
@@ -47,28 +48,26 @@ class QPBFT_Simulator:
             if node.reliable_score >= 0.7:
                 node.reliable_score += 2
         
-    def print_nodes(self, filter=False):
-        for node in self.nodes.get_all_nodes(filter=filter):
-            print(node)
-        print("-"*30)
+    def print_nodes(self, name_phase:str, filter=False):
+        if self.output:
+            print(name_phase)
+            for node in self.nodes.get_all_nodes(filter=filter):
+                print(node)
+            print("-"*30)
     
     def send_request(self, message:str):
 
         self.nodes.filter_node()
 
-        # //print("Request Phase")
         self.receive_request(message)
-        # //self.print_nodes(filter=True)
+        self.print_nodes("Request Phase", filter=True)
 
-        # //print("Prepare Phase")
         self.boradcast_prepare()
-        # //self.print_nodes(filter=True)
+        self.print_nodes("Prepare Phase", filter=True)
 
-        # //print("Confirm Phase")
         self.send_confirm_messages()
-        # //self.print_nodes(filter=True)
+        self.print_nodes("Confirm Phase", filter=True)
 
-        # //print("Generate-Block Phase")
         if self.verify_confirm_messages():
             print("Successful")
             self.success_proof += 1
