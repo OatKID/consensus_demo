@@ -69,7 +69,8 @@ class QPBFT_Simulator:
         self.print_nodes("Confirm Phase", filter=True)
 
         if self.verify_confirm_messages():
-            print("Successful")
+            if self.output:
+                print("Successful")
             self.success_proof += 1
             self.primary_node.reliable_score += 1
             self.give_score()
@@ -79,7 +80,8 @@ class QPBFT_Simulator:
                 if node.role == Role.MASTER:
                     node.add_block(message, timestamp)
         else:
-            print("Fail")
+            if self.output:
+                print("Fail")
             self.primary_node.reliable_score -= 1
 
         # * Clear log to do next round

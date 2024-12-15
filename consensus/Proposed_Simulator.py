@@ -76,14 +76,16 @@ class Proposed_Simulator:
             * If it is true, it will broadcast other nodes to make new block. It includes the primary node.
         """
         if self.verify_confirm_message():
-            print("Successful")
+            if self.output:
+                print("Successful")
             self.success_proof += 1
 
             timestamp = str(datetime.now())
             for node in self.nodes.get_all_nodes():
                 node.add_block(request, timestamp)
         else:
-            print("Fail")
+            if self.output:
+                print("Fail")
         
         
         # * Clear log to do next round

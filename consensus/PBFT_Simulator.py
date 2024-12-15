@@ -72,14 +72,16 @@ class PBFT_Simulator:
                 
         # * Verify commit messages to excute operation
         if self.verify_committed_local() and self.verify_committed():
-            print("Successful")
+            if self.output:
+                print("Successful")
             self.success_proof += 1
             message = self.primary_node.get_own_message("pre-prepare")
             timestamp = str(datetime.datetime.now())
             for node in self.nodes.get_all_nodes():
                 node.add_block(message, timestamp)
         else:
-            print("Fail")
+            if self.output:
+                print("Fail")
     
     def verify_committed(self) -> bool:
         count_replica = 0 # Count replicas whose verify prepared to be true
