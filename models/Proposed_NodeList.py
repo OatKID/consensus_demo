@@ -134,3 +134,6 @@ class Proposed_NodeList:
             node.priority = value
 
 
+    def random_priority_nodes_filter(self):
+        for node in self.node_filter:
+            node.random_priority()

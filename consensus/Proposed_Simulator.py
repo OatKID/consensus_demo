@@ -88,6 +88,7 @@ class Proposed_Simulator:
         
         # * Clear log to do next round
         self.nodes.clear_messages_all_nodes()
+        self.nodes.random_priority_nodes_filter()
         self.nodes.random_faulty(self.num_faulty)
         self.nodes.clear_node_filter()
         

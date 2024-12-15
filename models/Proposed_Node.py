@@ -11,4 +11,5 @@ class Proposed_Node(Node):
         return f"IdUser => {self.idUser}, Priority => {self.priority:.2f}, Role => {self.role.value:>7}, Faulty => {str(self.faulty):>6}, Send_Message => {str(self.send_message_log[0:3] if self.send_message_log else "\'\'"):<35}, Messages_Log => {self.messages_log}"
 
     
-
+    def random_priority(self):
+        self.priority = random.randint(0, 100)
