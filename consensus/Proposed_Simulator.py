@@ -6,7 +6,7 @@ from datetime import datetime
 class Proposed_Simulator:
     def __init__(self, num_master:int, num_slave:int, k:int, output=False) -> None:
         self.num_nodes = num_master + num_slave
-        self.num_faulty = random.randint(0, self.num_nodes//2)
+        self.num_faulty = random.randint(0, self.num_nodes//3)
         self.num_proposed_nodes = k
         self.nodes = Proposed_NodeList(num_master, num_slave, self.num_faulty)
         self.primary_node = None
@@ -92,7 +92,7 @@ class Proposed_Simulator:
         # * Clear log to do next round
         self.nodes.clear_messages_all_nodes()
         self.nodes.random_priority_nodes_filter()
-        self.num_faulty = random.randint(0, self.num_nodes//2)
+        self.num_faulty = random.randint(0, self.num_nodes//3)
         self.nodes.random_faulty(self.num_faulty)
         self.nodes.clear_node_filter()
         

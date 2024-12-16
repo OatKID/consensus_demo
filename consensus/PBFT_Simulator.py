@@ -4,7 +4,7 @@ from models.NodeList import NodeList
 class PBFT_Simulator:
     def __init__(self, num_nodes:int, output=False) -> None:
         self.num_nodes = num_nodes
-        self.num_faulty = random.randint(0, num_nodes//2)
+        self.num_faulty = random.randint(0, num_nodes//3)
         self.nodes = NodeList(num_nodes, self.num_faulty)
         self.primary_node:Node = None
         self.success_proof = 0
@@ -126,7 +126,7 @@ class PBFT_Simulator:
         self.print_nodes("Commit Phase")
         
         self.nodes.clear_messages_all_nodes()
-        self.num_faulty = random.randint(0, self.num_nodes//2)
+        self.num_faulty = random.randint(0, self.num_nodes//3)
         self.nodes.random_faulty(self.num_faulty)
         self.view_number += 1
         

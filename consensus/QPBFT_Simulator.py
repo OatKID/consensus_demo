@@ -6,7 +6,7 @@ import random
 class QPBFT_Simulator:
     def __init__(self, num_management:int, num_vote:int, output=False) -> None:
         self.num_nodes = num_management + num_vote
-        self.num_faulty = random.randint(0, self.num_nodes//2)
+        self.num_faulty = random.randint(0, self.num_nodes//3)
         self.nodes = QPBFT_NodeList(num_management, num_vote, self.num_faulty)
         self.primary_node:QPBFT_Node = None
         self.success_proof = 0
@@ -85,6 +85,6 @@ class QPBFT_Simulator:
 
         # * Clear log to do next round
         self.nodes.clear_messages_all_nodes()
-        self.num_faulty = random.randint(0, self.num_faulty//2)
+        self.num_faulty = random.randint(0, self.num_faulty//3)
         self.nodes.random_faulty(self.num_faulty)
         self.nodes.clear_node_filter()
