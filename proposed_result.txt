@@ -1,2 +1,23 @@
-['proposed', '6', '4', '5', '2']
+['proposed', '6', '4', '5']
+Request Phase
+IdUser => 4, Priority => 1.00, Role =>  Master, Faulty =>  False, Send_Message => ('Hello world', 'prepare', 4)      , Messages_Log => [('Hello world', 'prepare', 4, 'd88a8a85bc2fd2e455804c7ba3e439891ae4ca035b2af69e2ac8bad90296a90c')]
+IdUser => 7, Priority => 0.96, Role =>   Slave, Faulty =>  False, Send_Message => ''                                 , Messages_Log => []
+IdUser => 2, Priority => 0.96, Role =>  Master, Faulty =>  False, Send_Message => ''                                 , Messages_Log => []
+IdUser => 3, Priority => 0.79, Role =>  Master, Faulty =>   True, Send_Message => ''                                 , Messages_Log => []
+IdUser => 0, Priority => 0.70, Role =>  Master, Faulty =>  False, Send_Message => ''                                 , Messages_Log => []
+------------------------------
+Prepare Phase
+IdUser => 4, Priority => 1.00, Role =>  Master, Faulty =>  False, Send_Message => ('Hello world', 'prepare', 4)      , Messages_Log => [('Hello world', 'prepare', 4, 'd88a8a85bc2fd2e455804c7ba3e439891ae4ca035b2af69e2ac8bad90296a90c')]
+IdUser => 7, Priority => 0.96, Role =>   Slave, Faulty =>  False, Send_Message => ''                                 , Messages_Log => [('Hello world', 'prepare', 4, 'd88a8a85bc2fd2e455804c7ba3e439891ae4ca035b2af69e2ac8bad90296a90c')]
+IdUser => 2, Priority => 0.96, Role =>  Master, Faulty =>  False, Send_Message => ''                                 , Messages_Log => [('Hello world', 'prepare', 4, 'd88a8a85bc2fd2e455804c7ba3e439891ae4ca035b2af69e2ac8bad90296a90c')]
+IdUser => 3, Priority => 0.79, Role =>  Master, Faulty =>   True, Send_Message => ''                                 , Messages_Log => []
+IdUser => 0, Priority => 0.70, Role =>  Master, Faulty =>  False, Send_Message => ''                                 , Messages_Log => [('Hello world', 'prepare', 4, 'd88a8a85bc2fd2e455804c7ba3e439891ae4ca035b2af69e2ac8bad90296a90c')]
+------------------------------
+Confirm Phase
+IdUser => 4, Priority => 1.00, Role =>  Master, Faulty =>  False, Send_Message => ('Hello world', 'prepare', 4)      , Messages_Log => [('Hello world', 'prepare', 4, 'd88a8a85bc2fd2e455804c7ba3e439891ae4ca035b2af69e2ac8bad90296a90c'), ('Hello world', 'confirm', 7, '1dad7a34662e35584524737c108085f6f742bce327f00e0679b71aa92bd52910'), ('Hello world', 'confirm', 2, '47d294802431ee9d03a42661b1136f5c3372c42781d9b5dd5d93f85e743711dc'), ('Hello world', 'confirm', 0, '95017897d13a95fe2a7518fed07c68956956eea86fafe0663dc873378c85de26')]
+IdUser => 7, Priority => 0.96, Role =>   Slave, Faulty =>  False, Send_Message => ('Hello world', 'confirm', 7)      , Messages_Log => [('Hello world', 'prepare', 4, 'd88a8a85bc2fd2e455804c7ba3e439891ae4ca035b2af69e2ac8bad90296a90c')]
+IdUser => 2, Priority => 0.96, Role =>  Master, Faulty =>  False, Send_Message => ('Hello world', 'confirm', 2)      , Messages_Log => [('Hello world', 'prepare', 4, 'd88a8a85bc2fd2e455804c7ba3e439891ae4ca035b2af69e2ac8bad90296a90c')]
+IdUser => 3, Priority => 0.79, Role =>  Master, Faulty =>   True, Send_Message => ''                                 , Messages_Log => []
+IdUser => 0, Priority => 0.70, Role =>  Master, Faulty =>  False, Send_Message => ('Hello world', 'confirm', 0)      , Messages_Log => [('Hello world', 'prepare', 4, 'd88a8a85bc2fd2e455804c7ba3e439891ae4ca035b2af69e2ac8bad90296a90c')]
+------------------------------
 Successful

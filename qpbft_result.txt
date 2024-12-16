@@ -1,26 +1,23 @@
-['qpbft', '6', '4', '2']
+['qpbft', '6', '4']
 Request Phase
-IdUser => 0, Score => 0.64, Role =>  Manager, Faulty =>  False, Send_Message => ('Hello world', 'prepare', 0)      , Messages_Log => [('Hello world', 'prepare', 0, '4fcfde1fa5b7907fc4e291895d119b58e5880717d6da477f83c9a4c0b127e286')]
-IdUser => 2, Score => 0.97, Role =>  Manager, Faulty =>  False, Send_Message => ''                                 , Messages_Log => []
-IdUser => 5, Score => 0.95, Role =>  Manager, Faulty =>  False, Send_Message => ''                                 , Messages_Log => []
-IdUser => 6, Score => 0.62, Role =>    Voter, Faulty =>  False, Send_Message => ''                                 , Messages_Log => []
+IdUser => 0, Score => 0.99, Role =>  Manager, Faulty =>  False, Send_Message => ('Hello world', 'prepare', 0)      , Messages_Log => [('Hello world', 'prepare', 0, '4fcfde1fa5b7907fc4e291895d119b58e5880717d6da477f83c9a4c0b127e286')]
+IdUser => 3, Score => 0.63, Role =>  Manager, Faulty =>  False, Send_Message => ''                                 , Messages_Log => []
+IdUser => 5, Score => 0.70, Role =>  Manager, Faulty =>  False, Send_Message => ''                                 , Messages_Log => []
+IdUser => 6, Score => 0.82, Role =>    Voter, Faulty =>  False, Send_Message => ''                                 , Messages_Log => []
 IdUser => 7, Score => 1.00, Role =>    Voter, Faulty =>  False, Send_Message => ''                                 , Messages_Log => []
-IdUser => 8, Score => 0.65, Role =>    Voter, Faulty =>  False, Send_Message => ''                                 , Messages_Log => []
 ------------------------------
 Prepare Phase
-IdUser => 0, Score => 0.64, Role =>  Manager, Faulty =>  False, Send_Message => ('Hello world', 'prepare', 0)      , Messages_Log => [('Hello world', 'prepare', 0, '4fcfde1fa5b7907fc4e291895d119b58e5880717d6da477f83c9a4c0b127e286')]
-IdUser => 2, Score => 0.97, Role =>  Manager, Faulty =>  False, Send_Message => ''                                 , Messages_Log => []
-IdUser => 5, Score => 0.95, Role =>  Manager, Faulty =>  False, Send_Message => ''                                 , Messages_Log => []
-IdUser => 6, Score => 0.62, Role =>    Voter, Faulty =>  False, Send_Message => ''                                 , Messages_Log => [('Hello world', 'prepare', 0, '4fcfde1fa5b7907fc4e291895d119b58e5880717d6da477f83c9a4c0b127e286')]
+IdUser => 0, Score => 0.99, Role =>  Manager, Faulty =>  False, Send_Message => ('Hello world', 'prepare', 0)      , Messages_Log => [('Hello world', 'prepare', 0, '4fcfde1fa5b7907fc4e291895d119b58e5880717d6da477f83c9a4c0b127e286')]
+IdUser => 3, Score => 0.63, Role =>  Manager, Faulty =>  False, Send_Message => ''                                 , Messages_Log => []
+IdUser => 5, Score => 0.70, Role =>  Manager, Faulty =>  False, Send_Message => ''                                 , Messages_Log => []
+IdUser => 6, Score => 0.82, Role =>    Voter, Faulty =>  False, Send_Message => ''                                 , Messages_Log => [('Hello world', 'prepare', 0, '4fcfde1fa5b7907fc4e291895d119b58e5880717d6da477f83c9a4c0b127e286')]
 IdUser => 7, Score => 1.00, Role =>    Voter, Faulty =>  False, Send_Message => ''                                 , Messages_Log => [('Hello world', 'prepare', 0, '4fcfde1fa5b7907fc4e291895d119b58e5880717d6da477f83c9a4c0b127e286')]
-IdUser => 8, Score => 0.65, Role =>    Voter, Faulty =>  False, Send_Message => ''                                 , Messages_Log => [('Hello world', 'prepare', 0, '4fcfde1fa5b7907fc4e291895d119b58e5880717d6da477f83c9a4c0b127e286')]
 ------------------------------
 Confirm Phase
-IdUser => 0, Score => 0.64, Role =>  Manager, Faulty =>  False, Send_Message => ('Hello world', 'prepare', 0)      , Messages_Log => [('Hello world', 'prepare', 0, '4fcfde1fa5b7907fc4e291895d119b58e5880717d6da477f83c9a4c0b127e286'), ('Hello world', 'confirm', 6, '502b26f02fc4a351577a3e70a30de9dfee270fcba364bc47aac8d1107c286ea1'), ('Hello world', 'confirm', 7, '1dad7a34662e35584524737c108085f6f742bce327f00e0679b71aa92bd52910'), ('Hello world', 'confirm', 8, 'df53f3af2603ef43244759cf2da0ae1190030004e00036d193e018aa72af6255')]
-IdUser => 2, Score => 0.97, Role =>  Manager, Faulty =>  False, Send_Message => ''                                 , Messages_Log => []
-IdUser => 5, Score => 0.95, Role =>  Manager, Faulty =>  False, Send_Message => ''                                 , Messages_Log => []
-IdUser => 6, Score => 0.62, Role =>    Voter, Faulty =>  False, Send_Message => ('Hello world', 'confirm', 6)      , Messages_Log => [('Hello world', 'prepare', 0, '4fcfde1fa5b7907fc4e291895d119b58e5880717d6da477f83c9a4c0b127e286')]
+IdUser => 0, Score => 0.99, Role =>  Manager, Faulty =>  False, Send_Message => ('Hello world', 'prepare', 0)      , Messages_Log => [('Hello world', 'prepare', 0, '4fcfde1fa5b7907fc4e291895d119b58e5880717d6da477f83c9a4c0b127e286'), ('Hello world', 'confirm', 6, '502b26f02fc4a351577a3e70a30de9dfee270fcba364bc47aac8d1107c286ea1'), ('Hello world', 'confirm', 7, '1dad7a34662e35584524737c108085f6f742bce327f00e0679b71aa92bd52910')]
+IdUser => 3, Score => 0.63, Role =>  Manager, Faulty =>  False, Send_Message => ''                                 , Messages_Log => []
+IdUser => 5, Score => 0.70, Role =>  Manager, Faulty =>  False, Send_Message => ''                                 , Messages_Log => []
+IdUser => 6, Score => 0.82, Role =>    Voter, Faulty =>  False, Send_Message => ('Hello world', 'confirm', 6)      , Messages_Log => [('Hello world', 'prepare', 0, '4fcfde1fa5b7907fc4e291895d119b58e5880717d6da477f83c9a4c0b127e286')]
 IdUser => 7, Score => 1.00, Role =>    Voter, Faulty =>  False, Send_Message => ('Hello world', 'confirm', 7)      , Messages_Log => [('Hello world', 'prepare', 0, '4fcfde1fa5b7907fc4e291895d119b58e5880717d6da477f83c9a4c0b127e286')]
-IdUser => 8, Score => 0.65, Role =>    Voter, Faulty =>  False, Send_Message => ('Hello world', 'confirm', 8)      , Messages_Log => [('Hello world', 'prepare', 0, '4fcfde1fa5b7907fc4e291895d119b58e5880717d6da477f83c9a4c0b127e286')]
 ------------------------------
 Successful

@@ -4,12 +4,11 @@ from datetime import datetime
 from models.QPBFT_NodeList import QPBFT_NodeList
 import random
 class QPBFT_Simulator:
-    def __init__(self, num_management:int, num_vote:int, num_faulty:int=0, output=False) -> None:
-        self.num_faulty = num_faulty
-        self.nodes = QPBFT_NodeList(num_management, num_vote, num_faulty)
+    def __init__(self, num_management:int, num_vote:int, output=False) -> None:
+        self.num_nodes = num_management + num_vote
+        self.num_faulty = random.randint(0, self.num_nodes//2)
+        self.nodes = QPBFT_NodeList(num_management, num_vote, self.num_faulty)
         self.primary_node:QPBFT_Node = None
-        self.num_management = num_management
-        self.num_vote = num_vote
         self.success_proof = 0
         self.output = output
     
@@ -86,5 +85,6 @@ class QPBFT_Simulator:
 
         # * Clear log to do next round
         self.nodes.clear_messages_all_nodes()
+        self.num_faulty = random.randint(0, self.num_faulty//2)
         self.nodes.random_faulty(self.num_faulty)
         self.nodes.clear_node_filter()
