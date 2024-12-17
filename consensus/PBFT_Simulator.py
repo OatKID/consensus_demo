@@ -129,4 +129,6 @@ class PBFT_Simulator:
         self.num_faulty = random.randint(0, self.num_nodes//3)
         self.nodes.random_faulty(self.num_faulty)
         self.view_number += 1
-        
+    
+    def total_send_receive_messages(self):
+        return self.nodes.total_send_receive_messages()

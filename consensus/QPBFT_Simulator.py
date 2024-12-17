@@ -88,3 +88,6 @@ class QPBFT_Simulator:
         self.num_faulty = random.randint(0, self.num_faulty//3)
         self.nodes.random_faulty(self.num_faulty)
         self.nodes.clear_node_filter()
+    
+    def total_send_receive_messages(self):
+        return self.nodes.total_send_receive_messages()

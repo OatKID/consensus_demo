@@ -7,7 +7,7 @@ class QPBFT_NodeList:
         self.nodelist:list[QPBFT_Node] = self.generate_nodes(num_manager, num_voter, num_faulty)
         self.node_filter = []
     
-    def generate_nodes(self, num_manager, num_voter, num_faulty):
+    def generate_nodes(self, num_manager, num_voter, num_faulty) -> list[QPBFT_Node]:
         new_nodes = []
         try:
             if num_manager + num_voter <= num_faulty:
@@ -77,6 +77,7 @@ class QPBFT_NodeList:
 
         if origin_node.faulty != True:
             message = origin_node.send_message_log
+            origin_node.num_send_messages += 1
             self.receive_message(destination_node.idUser, message)
             return True
         else:
@@ -142,3 +143,15 @@ class QPBFT_NodeList:
     # * Clear node list which is filtered
     def clear_node_filter(self):
         self.node_filter.clear()
+    
+    def total_send_receive_messages(self):
+        total_send = 0
+        total_receive = 0
+        for node in self.nodelist:
+            total_send += node.num_send_messages
+            total_receive += node.num_receive_messages
+        
+        return {
+            "total_send": total_send,
+            "total_receive": total_receive 
+        }

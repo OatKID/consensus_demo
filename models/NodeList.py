@@ -3,9 +3,9 @@ import random
 
 class NodeList:
     def __init__(self, num_node:int, num_faulty:int) -> None:
-        self.nodelist = self.generate_nodes(num_node, num_faulty)
+        self.nodelist:list[Node] = self.generate_nodes(num_node, num_faulty)
     
-    def generate_nodes(self, num_node:int, num_faulty:int):
+    def generate_nodes(self, num_node:int, num_faulty:int) -> list[Node]:
         new_nodes = []
         try:
             if num_node <= num_faulty:
@@ -35,6 +35,7 @@ class NodeList:
 
         if origin_node.faulty != True:
             message = origin_node.send_message_log
+            origin_node.num_send_messages += 1
             self.receive_message(destination_node.idUser, message)
             return True
         else:
@@ -73,3 +74,15 @@ class NodeList:
 
         for f_node in faulty_nodes:
             f_node.faulty = True
+    
+    def total_send_receive_messages(self):
+        total_send = 0
+        total_receive = 0
+        for node in self.nodelist:
+            total_send += node.num_send_messages
+            total_receive += node.num_receive_messages
+        
+        return {
+            "total_send": total_send,
+            "total_receive": total_receive 
+        }

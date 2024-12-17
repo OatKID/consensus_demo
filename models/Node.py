@@ -8,6 +8,8 @@ class Node:
         self.messages_log = []
         self.faulty = faulty
         self.signature = secrets.token_urlsafe(16)
+        self.num_send_messages = 0
+        self.num_receive_messages = 0
     
     def add_block(self, transaction:str, timestamp:str):
         return self.blockchain.add_block(transaction, timestamp)
@@ -37,6 +39,7 @@ class Node:
     
     def receive_message(self, message:tuple):
         self.messages_log.append(message)
+        self.num_receive_messages += 1
     
     def verify_own_message(self, phase:str) -> bool:
 
