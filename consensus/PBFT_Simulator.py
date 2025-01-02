@@ -125,6 +125,7 @@ class PBFT_Simulator:
         self.broadcast_commit()
         self.print_nodes("Commit Phase")
         
+        # * Restart to do consensus next round
         self.nodes.clear_messages_all_nodes()
         self.num_faulty = random.randint(0, self.num_nodes//3)
         self.nodes.random_faulty(self.num_faulty)
