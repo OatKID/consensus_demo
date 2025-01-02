@@ -1,121 +1,100 @@
 from models.Proposed_Node import Proposed_Node
+from models.Proposed_NodeList import Proposed_NodeList
 from models.Role import Role
 import random
 from datetime import datetime
 class Proposed_Simulator:
-    def __init__(self, num_master:int, num_slave:int, k:int, num_faulty:int=0) -> None:
-        self.num_faulty = num_faulty
+    def __init__(self, num_master:int, num_slave:int, k:int, output=False) -> None:
+        self.num_nodes = num_master + num_slave
+        self.num_faulty = random.randint(0, self.num_nodes//3)
         self.num_proposed_nodes = k
-        self.nodes = self.generate_nodes(num_master, num_slave)
-        self.proposed_nodes = random.sample(self.nodes, k=k)
-        self.primary_node_index = self.select_primary_node()
+        self.nodes = Proposed_NodeList(num_master, num_slave, self.num_faulty)
+        self.primary_node = None
         self.success_proof = 0
-        
-    def generate_nodes(self, num_master, num_slave):
-        new_nodes = []
-        for i in range(num_master):
-            new_node = Proposed_Node(i, role=Role.MASTER)
-            new_nodes.append(new_node)
-        
-        for i in range(num_master, num_master+num_slave):
-            new_node = Proposed_Node(i, role=Role.SLAVE)
-            new_nodes.append(new_node)
-        
-        faulty_nodes = random.sample(new_nodes, k=self.num_faulty)
-        for f_node in faulty_nodes:
-            f_node.faulty = True
-        
-        return new_nodes
-    
-    def print_nodes(self, nodes):
-        for node in nodes:
-            print(node)
-        print("-"*30)
+        self.output = output
     
     def select_primary_node(self):
-        primary_node_index = 0
-        max_priority = 0
-        for i in range(len(self.proposed_nodes)):
-            if self.proposed_nodes[i].priority > max_priority:
-                primary_node_index = i
-                max_priority = self.proposed_nodes[i].priority
-        return primary_node_index
+        self.nodes.normalize_priority()
+        node_filter = self.nodes.get_all_nodes(filter=True)
+        node_filter.sort(key=lambda node: node.priority, reverse=True)
+        for node in node_filter:
+            if node.faulty == False:
+                self.primary_node = node
+                break
     
+    def print_nodes(self, name_phase:str, filter=False):
+        if self.output:
+            print(name_phase)
+            for node in self.nodes.get_all_nodes(filter=filter):
+                print(node)
+            print("-"*30)
+
+    def receive_request(self, message:str):
+        self.nodes.select_nodes_consensus(self.num_proposed_nodes)
+        self.select_primary_node()
+
+        self.primary_node.create_message(message, "prepare")
+        self.primary_node.receive_message(self.primary_node.send_message_log)
+
     def broadcast_internal(self):
-        message = self.proposed_nodes[self.primary_node_index].receive_messages_log[-1][0]
-        prepare_message = (message, "prepare", self.proposed_nodes[self.primary_node_index].idUser)
-        self.proposed_nodes[self.primary_node_index].send_messages_log = prepare_message
-        for node in self.proposed_nodes:
-            if node.idUser != self.proposed_nodes[self.primary_node_index].idUser:
-                self.receive_prepare(node, prepare_message)
+        for current_node in self.nodes.get_all_nodes(filter=True):
+            if current_node.faulty != True and current_node != self.primary_node:
+                self.nodes.send_message(self.primary_node.idUser, current_node.idUser)
     
-    def receive_prepare(self, node, message):
-        node.receive_messages_log.append(message)
-
-    def reply_internal(self):
-        for node in self.proposed_nodes:
-            if node.idUser != self.proposed_nodes[self.primary_node_index].idUser:
-                message = node.receive_messages_log[-1]
-                vote = random.randint(0, 1)
-                commit_message = (message[0], "commit", node.idUser, vote)
-                node.send_messages_log = commit_message
-                self.proposed_nodes[self.primary_node_index].receive_messages_log.append(commit_message)
-
-    def verify_vote(self):
-        messages = self.proposed_nodes[self.primary_node_index].receive_messages_log[1:]
-        count_vote = 0
-        for message in messages:
-            if message[3]:
-                count_vote += 1
-        
-        if count_vote >= (len(self.proposed_nodes) * 2)//3:
+    def reply_confirm_message(self):
+        for current_node in self.nodes.get_all_nodes(filter=True):
+            if current_node.faulty != True and current_node != self.primary_node and current_node.verify_own_message("prepare"):
+                self.nodes.create_message(current_node.idUser, current_node.get_own_message("prepare"), "confirm")
+                self.nodes.send_message(current_node.idUser, self.primary_node.idUser)
+    
+    def verify_confirm_message(self) -> bool:
+        if self.primary_node.compare_phase("prepare", "confirm") and self.primary_node.get_num_messages_phase("confirm") >= (2 * self.nodes.get_num_nodes(filter=True))//3 :
             return True
         else:
             return False
-
-    def broadcast_new_block(self):
-        message = self.proposed_nodes[self.primary_node_index].send_messages_log
-        new_block_message = (message[0], "new_block", self.proposed_nodes[self.primary_node_index].idUser)
-        for node in self.nodes:
-            if node.faulty == False:
-                self.receive_new_block(node, new_block_message)
-        pass
-    
-    def receive_new_block(self, node, message):
-        node.receive_messages_log.append(message)
-        if node.role.value == Role.MASTER.value:
-            timestamp = str(datetime.now())
-            node.add_block(message[0], timestamp)
+        
 
     def send_request(self, request:str):
-        # The client sends a request to proposed_nodes which there is a the primary node to receive a request.
-        print("Request Phase")
-        self.proposed_nodes[self.primary_node_index].receive_messages_log.append((request, "request", -1))
-        self.print_nodes(self.proposed_nodes)
         
-        # The primary node broadcast a request to other nodes in the group of proposed nodes.
-        print("Prepare Internal Phase")
+        # * The client sends a request to proposed_nodes which there is a the primary node to receive a request.
+        self.receive_request(request)
+        self.print_nodes("Request Phase", filter=True)
+
+        # * The primary node will broadcast a prepare-message to other internal nodes
         self.broadcast_internal()
-        self.print_nodes(self.proposed_nodes)
+        self.print_nodes("Prepare Phase", filter=True)
 
-        # Each node in the proposed nodes reply the leader node a commit-message.
-        print("Commit Internal Phase")
-        self.reply_internal()
-        self.print_nodes(self.proposed_nodes)
-
-        # Verify the number of votes to make new block.
-        print("Produce Block Phase")
-        if self.verify_vote():
-            self.broadcast_new_block()
-            self.print_nodes(self.nodes)
-            print("Complete")
-            self.success_proof += 1
-        else:
-            print("Fail")
+        """
+            * 1. The internal nodes will verify a own prepare-message whether is not tampered.
+            * 2. If a own prepare-message is not tampered in each node, it will create a confirm-message and send it to the primary node. 
+        """
+        self.reply_confirm_message()
+        self.print_nodes("Confirm Phase", filter=True)
         
-        # Choose proposed nodes to do consensus next round
-        self.proposed_nodes = random.sample(self.nodes, k=self.num_proposed_nodes)
-        self.primary_node_index = self.select_primary_node()
+        
+        """
+            * The primary node will verify confirm-messages at least 2/3 of internal node.
+            * If it is true, it will broadcast other nodes to make new block. It includes the primary node.
+        """
+        if self.verify_confirm_message():
+            if self.output:
+                print("Successful")
+            self.success_proof += 1
 
-        for node in self.nodes:
-            node.clear_messages()
+            timestamp = str(datetime.now())
+            for node in self.nodes.get_all_nodes():
+                node.add_block(request, timestamp)
+        else:
+            if self.output:
+                print("Fail")
+        
+        
+        # * Clear log to do next round
+        self.nodes.clear_messages_all_nodes()
+        self.nodes.random_priority_nodes_filter()
+        self.num_faulty = random.randint(0, self.num_nodes//3)
+        self.nodes.random_faulty(self.num_faulty)
+        self.nodes.clear_node_filter()
+    
+    def total_send_receive_messages(self):
+        return self.nodes.total_send_receive_messages()

@@ -1,131 +1,135 @@
 from models.Node import Node
 import random, datetime
+from models.NodeList import NodeList
 class PBFT_Simulator:
-    def __init__(self, num_node:int, num_faulty:int=0) -> None:
-        self.num_faulty = num_faulty
-        self.nodes = self.generate_nodes(num_node)
-        self.primary_node_index = None
+    def __init__(self, num_nodes:int, output=False) -> None:
+        self.num_nodes = num_nodes
+        self.num_faulty = random.randint(0, num_nodes//3)
+        self.nodes = NodeList(num_nodes, self.num_faulty)
+        self.primary_node:Node = None
         self.success_proof = 0
-        
-    def generate_nodes(self, num_node:int):
-        new_nodes = []
-        for i in range(num_node):
-            new_node = Node(i)
+        self.view_number = 0
+        self.output = output
 
-            new_nodes.append(new_node)
-
-        if self.num_faulty == 0:
-            return new_nodes
-    
-        faulty_nodes = random.sample(new_nodes, k=self.num_faulty)
-        for f_node in faulty_nodes:
-            f_node.faulty = True
-        return new_nodes
 
     def receive_request(self, message):
-        # Let choose the leader node to receive a request by using index
-        self.primary_node_index = random.randint(0, len(self.nodes)-1)
-        while self.nodes[self.primary_node_index].faulty:
-            self.primary_node_index = random.randint(0, len(self.nodes)-1)
-        
-        recieve_message = (message, "request", -1) # -1 define to be the client which send a request
-        self.nodes[self.primary_node_index].receive_messages_log.append(recieve_message)
-    
-    def broadcast_pre_prepare(self):
-        message = self.nodes[self.primary_node_index].receive_messages_log[-1][0]
-        pre_prepare_message = (message, "pre_preprare", self.primary_node_index)
-        self.nodes[self.primary_node_index].send_messages_log = pre_prepare_message
+        # * Let choose the leader node to receive a request by using index
+        primary_node_index = self.view_number % self.num_nodes
+        while self.nodes.nodelist[primary_node_index].faulty == True:
+            self.view_number += 1
+            primary_node_index = self.view_number % self.num_nodes
 
-        for i in range(len(self.nodes)):
-            if i != self.primary_node_index:
-                self.receive_pre_prepare(pre_prepare_message, i)
+        self.primary_node = self.nodes.nodelist[primary_node_index]
+
+        # * The primary node receive the request and make a pre-prepare message to insert its log.
+        self.primary_node.create_message(message, "pre-prepare")
+        self.primary_node.receive_message(self.primary_node.send_message_log)
     
-    def receive_pre_prepare(self, message, index):
-        self.nodes[index].receive_messages_log.append(message)
-    
-    def broadcast_prepare(self, current_node):
-        message = current_node.receive_messages_log[-1][0]
-        prepare_message = (message, "prepare", current_node.idUser)
-        current_node.send_messages_log = prepare_message
-        for i in range(len(self.nodes)):
-            if (self.nodes[i] != current_node):
-                self.receive_prepare(prepare_message, i)
-    
-    def receive_prepare(self, message, index):
-        self.nodes[index].receive_messages_log.append(message)
-    
-    
-    def broadcast_commit(self, current_node):
-        messages = current_node.filter_messages("prepare")
-        commit_message = (messages[0][0], "commit", current_node.idUser, random.randint(0, 1))
-        current_node.send_messages_log = commit_message
-        for i in range(len(self.nodes)):
-            if (self.nodes[i] != current_node):
-                self.receive_commit(commit_message, i)
-    
-    def receive_commit(self, message, index):
-        self.nodes[index].receive_messages_log.append(message)
-    
-    def reply_client(self, current_node):
-        count = 0
-        for message in current_node.receive_messages_log:
-            if message[1] == "commit":
-                if message[3]:
-                    count += 1
+    # * The primary node create pre-prepare message to broadcast the backup node
+    def broadcast_pre_prepare(self):
+        for current_node in self.nodes.get_all_nodes():
+            if current_node != self.primary_node:
+                self.nodes.send_message(self.primary_node.idUser, current_node.idUser)
         
-        if count >= 2 * self.num_faulty + 1:
-            return 1
-        else:
-            return 0
+        # * Verify pre-prepare message to make prepare message
+        for current_node in self.nodes.get_all_nodes():
+            if current_node.verify_own_message("pre-prepare") and current_node.faulty != True:
+                self.nodes.create_message(current_node.idUser, current_node.get_own_message("pre-prepare"), "prepare")
     
-    def get_nodes(self):
-        for i in range(len(self.nodes)):
-            print(self.nodes[i])
-        print("-"*30)
+    def broadcast_prepare(self):
+        for current_node in self.nodes.get_all_nodes():
+            if current_node != self.primary_node and current_node.faulty != True:
+                for other_node in self.nodes.get_all_nodes():
+                    if current_node != other_node:
+                        self.nodes.send_message(current_node.idUser, other_node.idUser)
+                    else:
+                        pass
+            else:
+                pass
+        
+        # * Verify prepare message to make commit message
+        for current_node in self.nodes.get_all_nodes():
+            if self.verify_prepare(current_node) and current_node.faulty != True:
+                self.nodes.create_message(current_node.idUser, current_node.get_own_message("prepare"), "commit")
+
+    def verify_prepare(self, current_node:Node) -> bool:
+        if current_node.verify_own_message("prepare") and current_node.compare_phase("pre-prepare", "prepare") and (current_node.get_num_messages_phase("prepare") >= 2 * self.num_faulty):
+            return True
+        else:
+            return False
+        
+    
+    def broadcast_commit(self):
+        for current_node in self.nodes.get_all_nodes():
+            if current_node.faulty != True:
+                for other_node in self.nodes.get_all_nodes():
+                    if current_node != other_node:
+                        self.nodes.send_message(current_node.idUser, other_node.idUser)
+                    else:
+                        pass
+            else:
+                pass
+                
+        # * Verify commit messages to excute operation
+        if self.verify_committed_local() and self.verify_committed():
+            if self.output:
+                print("Successful")
+            self.success_proof += 1
+            message = self.primary_node.get_own_message("pre-prepare")
+            timestamp = str(datetime.datetime.now())
+            for node in self.nodes.get_all_nodes():
+                node.add_block(message, timestamp)
+        else:
+            if self.output:
+                print("Fail")
+    
+    def verify_committed(self) -> bool:
+        count_replica = 0 # Count replicas whose verify prepared to be true
+        for current_node in self.nodes.get_all_nodes():
+            if self.verify_prepare(current_node) and current_node.faulty != True:
+                count_replica += 1
+        
+        if count_replica > self.num_faulty + 1:
+            return True
+        else:
+            return False
+            
+    def verify_committed_local(self) -> bool:
+        for current_node in self.nodes.get_all_nodes():
+            if self.verify_prepare(current_node) and current_node.get_num_messages_phase("commit") >= 2*self.num_faulty + 1 and current_node.faulty != True:
+                return True
+        return False
+    
+    def print_nodes(self, name_phase:str):
+        if self.output:
+            print(name_phase)
+            for i in range(self.nodes.get_num_nodes()):
+                print(self.nodes.find_node(i))
+            print("-"*30)
     
     def send_request(self, new_transaction:str):
 
-        # Start to recieve a request from the client
-        print("Request Phase")
+        # * Start to recieve a request from the client
         self.receive_request(new_transaction)
-        self.get_nodes()
+        self.print_nodes("Request Phase")
 
-        # The leader node broadcasts to the other nodes (Pre-Prepare Phase)
-        print("Pre-Prepare Phase")
+        # * The leader node broadcasts to the other nodes (Pre-Prepare Phase)
         self.broadcast_pre_prepare()
-        self.get_nodes()
+        self.print_nodes("Pre-Prepare Phase")
 
-        # Other nodes which exclude the leader node will broadcast other nodes (Prepare Phase)
-        print("Prepare Phase")
-        for node in self.nodes:
-            if node != self.nodes[self.primary_node_index] and (node.faulty == False):
-                self.broadcast_prepare(node)
-        self.get_nodes()
+        # * Other nodes which exclude the leader node will broadcast other nodes (Prepare Phase)
+        self.broadcast_prepare()
+        self.print_nodes("Prepare Phase")
 
-        # After each node have received prepare messages already, it will broadcast commit messages to make new block (Assume that the message is true)
-        print("Commit Phase")
-        for node in self.nodes:
-            if node.faulty == False:
-                self.broadcast_commit(node)
-        self.get_nodes()
+        # * After each node have received prepare messages already, it will broadcast commit messages to make new block (Assume that the message is true)
+        self.broadcast_commit()
+        self.print_nodes("Commit Phase")
         
-        # After each node have received commit messages already, it will verify those messages to create new block. and reply to the client.
-        print("Reply Phase")
-        num_reply_messages = 0
-        for node in self.nodes:
-            if node.faulty == False:
-                num_reply_messages += self.reply_client(node)
-        
-        if num_reply_messages >= self.num_faulty + 1:
-            date = str(datetime.datetime.now())
-            for node in self.nodes:
-                if node.faulty == False:
-                    node.add_block(node.receive_messages_log[-1][0], date)
-            print("Successfully in consensus")
-            self.success_proof += 1
-        else:
-            print("Fail in consensus")
-        
-        for node in self.nodes:
-            node.clear_messages()
-        
+        # * Restart to do consensus next round
+        self.nodes.clear_messages_all_nodes()
+        self.num_faulty = random.randint(0, self.num_nodes//3)
+        self.nodes.random_faulty(self.num_faulty)
+        self.view_number += 1
+    
+    def total_send_receive_messages(self):
+        return self.nodes.total_send_receive_messages()

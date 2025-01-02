@@ -1,8 +1,7 @@
 # Consensus Algorithm For Education
 
-
 ## Prepare package before execute
-1. Install [Python](https://www.python.org/) version 3.13
+1. Install [Python](https://www.python.org/) version 3.12
 2. Create virtual environment and install package as follow:
 ```command line
 python -m venv .venv
@@ -16,24 +15,24 @@ pip install -r requirement.txt
 ## Test Simulation
 ### Test PBFT
 ``` bash
-# python simulator.py pbft <num-nodes> <num-faulty-nodes(optional)> > pbft_result.txt
+# python simulator.py pbft <num-nodes> > pbft_result.txt
 
 # Example
-python simulator.py pbft 10 2 > pbft_result.txt
+python simulator.py pbft 10 > pbft_result.txt
 ```
 
 ### Test QPBFT
 ``` bash
-# python simulator.py qpbft <num-management-nodes> <num-vote-nodes> <num-faulty-nodes(optional)> > qpbft_result.txt
+# python simulator.py qpbft <num-management-nodes> <num-vote-nodes> > qpbft_result.txt
 
 # Example
-python simulator.py qpbft 6 4 2 > qpbft_result.txt
+python simulator.py qpbft 6 4 > qpbft_result.txt
 ```
 
 ### Test Proposed
 ``` bash
-# python simulator.py proposed <num-master-nodes> <num-slave-nodes> <num-sample> <num-faulty-nodes(optional)> > proposed_result.txt
+# python simulator.py proposed <num-master-nodes> <num-slave-nodes> <num-sample> > proposed_result.txt
 
 # Example
-python simulator.py proposed 6 4 5 2 > proposed_result.txt
+python simulator.py proposed 6 4 5 > proposed_result.txt
 ```

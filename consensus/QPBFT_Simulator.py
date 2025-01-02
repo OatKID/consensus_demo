@@ -1,118 +1,93 @@
 from models.QPBFT_Node import QPBFT_Node
 from models.Role import Role
 from datetime import datetime
+from models.QPBFT_NodeList import QPBFT_NodeList
 import random
 class QPBFT_Simulator:
-    def __init__(self, num_management:int, num_vote:int, num_faulty:int=0) -> None:
-        self.num_faulty = num_faulty
-        self.nodes = self.generate_nodes(num_management, num_vote)
-        self.primary_node_index = 0
-        self.num_management = num_management
-        self.num_vote = num_vote
+    def __init__(self, num_management:int, num_vote:int, output=False) -> None:
+        self.num_nodes = num_management + num_vote
+        self.num_faulty = random.randint(0, self.num_nodes//3)
+        self.nodes = QPBFT_NodeList(num_management, num_vote, self.num_faulty)
+        self.primary_node:QPBFT_Node = None
         self.success_proof = 0
+        self.output = output
     
-    def generate_nodes(self, num_management, num_vote):
-        new_nodes = []
-        for i in range(num_management):
-            new_node = QPBFT_Node(i, role=Role.MANAGER)
-            new_nodes.append(new_node)
+    def receive_request(self, message:str):
+        if self.primary_node == None:
+            self.primary_node = self.nodes.find_node(0)
+        else:
+            self.primary_node = random.choice(self.nodes.get_all_nodes(Role.MANAGER, filter=True, include_faulty=False))
         
-        for i in range(num_management, num_management + num_vote):
-            new_node = QPBFT_Node(i, role=Role.VOTER)
-            new_nodes.append(new_node)
+        self.primary_node.create_message(message, "prepare")
+        self.primary_node.receive_message(self.primary_node.send_message_log)
+    
+
+    def boradcast_prepare(self):
+        for current_node in self.nodes.get_all_nodes(filter=True):
+            if current_node != self.primary_node and current_node.role.value == "Voter":
+                self.nodes.send_message(self.primary_node.idUser, current_node.idUser)
         
-        faulty_nodes = random.sample(new_nodes, k=self.num_faulty)
-        for f_node in faulty_nodes:
-            f_node.faulty = True
-
-        return new_nodes
     
-    def broadcast_prepare(self):
-        message = self.nodes[self.primary_node_index].receive_messages_log[-1]
-        prepare_message = (message[0], "prepare", self.nodes[self.primary_node_index].idUser)
-        self.nodes[self.primary_node_index].send_messages_log = prepare_message
-
-        for current_node in self.nodes:
-            if current_node.role.value == Role.VOTER.value:
-                self.receive_prepare(current_node, prepare_message)
-
-    def receive_prepare(self, node, prepare_message):
-        node.receive_messages_log.append(prepare_message)
-
+    def send_confirm_messages(self):
+        # * Verfity messages whelter is not tampered and send it to the primary node.
+        for voting_node in self.nodes.get_all_nodes(Role.VOTER, filter=True):
+            if voting_node.verify_own_message("prepare") and voting_node.faulty != True:
+                self.nodes.create_message(voting_node.idUser, voting_node.get_own_message("prepare"), "confirm")
+                self.nodes.send_message(voting_node.idUser, self.primary_node.idUser)
     
-    def reply_management(self):
-        for current_node in self.nodes:
-            if (current_node.role.value == Role.VOTER.value) and (current_node.faulty == False):
-                message = current_node.receive_messages_log[-1]
-                confirm = random.randint(0, 1)
-                confirm_message = (message[0], "confirm", current_node.idUser, confirm)
-                current_node.send_messages_log = confirm_message
-                self.nodes[self.primary_node_index].receive_messages_log.append(confirm_message)
-    
-    def get_user_receive(self, n):
-        return n[2]
-
-    def sort(self, list_of_tuples):
-        return sorted(list_of_tuples, key=self.get_user_receive)
-    
-    def verfity_vote(self):
-        messages = self.sort(self.nodes[self.primary_node_index].receive_messages_log)
-        messages = messages[1:]
-        
-        count_vote = 0
-        for message in messages:
-            if message[3]:
-                count_vote += 1
-
-        if count_vote >= 1 + (self.num_vote//2):
+    def verify_confirm_messages(self) -> bool:
+        if self.primary_node.compare_phase("prepare", "confirm") and self.primary_node.get_num_messages_phase("confirm") >= 1 + (self.nodes.get_num_nodes(Role.VOTER, filter=True)//2):
             return True
         else:
             return False
+    
+    def give_score(self):
+        for node in self.nodes.get_all_nodes(filter=True):
+            # * Give Reward to reliable node
+            if node.reliable_score >= 0.7:
+                node.reliable_score += 2
         
-    def broadcast_new_block(self):
-        message = self.nodes[self.primary_node_index].send_messages_log[0]
-        for node in self.nodes:
-            if node.faulty == False:
-                node.add_block(message, datetime.now())
+    def print_nodes(self, name_phase:str, filter=False):
+        if self.output:
+            print(name_phase)
+            for node in self.nodes.get_all_nodes(filter=filter):
+                print(node)
+            print("-"*30)
     
-    def print_nodes(self):
-        for i in range(len(self.nodes)):
-            print(self.nodes[i])
-        print("-"*30)
-    
-    def send_request(self, request:str):
-        # The client begins to send a request to the management node which is selected to receive.
-        print("Request Phase")
-        self.nodes[self.primary_node_index].receive_messages_log.append((request, "request", -1))
-        self.print_nodes()
+    def send_request(self, message:str):
 
-        # The management node broadcasts a prepare-message to voting nodes
-        print("Prepare Phase")
-        self.broadcast_prepare()
-        self.print_nodes()
+        self.nodes.filter_node()
 
-        # The voting nodes commit the message and reply a commit-message to the management node
-        print("Commit Phase")
-        self.reply_management()
-        self.print_nodes()
+        self.receive_request(message)
+        self.print_nodes("Request Phase", filter=True)
 
-        # The management node verify the number of votes, which are accepted a message, to create management.
-        print("Produce Block Phase")
-        if self.verfity_vote():
-            self.broadcast_new_block()
-            print("Complete")
+        self.boradcast_prepare()
+        self.print_nodes("Prepare Phase", filter=True)
+
+        self.send_confirm_messages()
+        self.print_nodes("Confirm Phase", filter=True)
+
+        if self.verify_confirm_messages():
+            if self.output:
+                print("Successful")
             self.success_proof += 1
+            self.primary_node.reliable_score += 1
+            self.give_score()
+
+            timestamp = str(datetime.now())
+            for node in self.nodes.get_all_nodes():
+                if node.role == Role.MASTER:
+                    node.add_block(message, timestamp)
         else:
-            print("Fail")
-        
-        checkFaulty = True
-        while checkFaulty:
-            self.primary_node_index = random.randint(0, self.num_management + self.num_vote - 1)
-            current_node = self.nodes[self.primary_node_index]
-            if (current_node.faulty == False) and (current_node.role.value == Role.MANAGER.value):
-                checkFaulty = False
-                break
-        
-        for node in self.nodes:
-            node.clear_messages()
-        
+            if self.output:
+                print("Fail")
+            self.primary_node.reliable_score -= 1
+
+        # * Clear log to do next round
+        self.nodes.clear_messages_all_nodes()
+        self.num_faulty = random.randint(0, self.num_faulty//3)
+        self.nodes.random_faulty(self.num_faulty)
+        self.nodes.clear_node_filter()
+    
+    def total_send_receive_messages(self):
+        return self.nodes.total_send_receive_messages()
